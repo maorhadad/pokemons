@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.hadadas.pokemons.abstraction.IPokemonClickListener" />
+
+        <variable
+            name="pokemonShort"
+            type="com.hadadas.pokemons.abstraction.IPokemon" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_frame_empty"
+        android:outlineProvider="bounds"
+        android:onClick="@{() -> clickListener.onPokemonClick(pokemonShort)}"
+        android:padding="@dimen/default_padding">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:text="@{pokemonShort.getPokemonName()}"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Balbasaur" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.hadadas.pokemons.ui.main.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:background="@color/silkWhite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.main.MainFragment">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pokemons"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:gravity="center"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+
+            android:id="@+id/deviceList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            tools:itemCount="20"
+            tools:listitem="@layout/pokemon_short" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
