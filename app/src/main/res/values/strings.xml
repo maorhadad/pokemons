@@ -7,4 +7,5 @@
 
     <string name="pokemon_height_format">%d\' Decimetres"</string>
     <string name="pokemon_weight_format">%d Hectograms</string>
+    <string name="title_pokadex">PokaDex</string>
 </resources>

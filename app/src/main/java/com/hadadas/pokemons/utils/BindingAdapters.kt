@@ -3,6 +3,8 @@ package com.hadadas.pokemons.utils
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.hadadas.pokemons.R
 
 @BindingAdapter("imageUrl")
 fun loadImage(view: ImageView, imageUrl: String?) {
@@ -10,6 +12,8 @@ fun loadImage(view: ImageView, imageUrl: String?) {
         Glide
             .with(view.context)
             .load(it)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.pokaball2)
             .into(view)
     }
 }

@@ -6,6 +6,8 @@ interface IPokemon {
     fun getPokemonName(): String
     fun getPokemonId(): Int
 
+    fun getImageURL(): String
+
     @PokemonViewTypes
     fun getType(): Int
 

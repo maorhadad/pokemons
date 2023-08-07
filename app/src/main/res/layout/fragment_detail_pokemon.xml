@@ -25,16 +25,8 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@null"
-                app:imageUrl="@{pokemonViewModel.getPokemonLd().sprites.frontDefault}" />
+                app:imageUrl="@{pokemonViewModel.getPokemonLd().getImageURL()}" />
 
-            <ImageView
-                android:id="@+id/backImageView"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/small_margin"
-                android:contentDescription="@null"
-                app:imageUrl="@{pokemonViewModel.getPokemonLd().sprites.backDefault}" />
 
             <TextView
                 android:layout_width="wrap_content"

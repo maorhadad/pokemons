@@ -24,15 +24,26 @@
         android:onClick="@{() -> clickListener.onPokemonClick(pokemonShort)}"
         android:padding="@dimen/default_padding">
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/small_margin"
-            android:text="@{pokemonShort.getPokemonName()}"
-            android:textStyle="bold"
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@null"
+            app:imageUrl="@{pokemonShort.getImageURL()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{pokemonShort.getPokemonName()}"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/profileImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="Balbasaur" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

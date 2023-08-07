@@ -23,7 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pokemons"
+            android:text="@string/title_pokadex"
             android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:gravity="center"/>
