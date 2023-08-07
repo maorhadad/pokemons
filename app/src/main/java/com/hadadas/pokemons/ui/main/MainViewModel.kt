@@ -11,6 +11,7 @@ import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonClickListener
 import com.hadadas.pokemons.database.getDatabase
 import com.hadadas.pokemons.databinding.PokemonShortBinding
+import com.hadadas.pokemons.network.PokemonService
 import com.hadadas.pokemons.repositories.PokemonRepository
 import com.hadadas.pokemons.ui.main.recycler.BaseViewHolder
 import com.hadadas.pokemons.ui.main.recycler.PokemonShortViewHolder
@@ -23,8 +24,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var offset = 0
     private val delta = 100
 
-    private val pokemonRepository = PokemonRepository(getDatabase(application))
-    val pokemons = pokemonRepository.pokemons
+    private val pokemonRepository = PokemonRepository(getDatabase(application), PokemonService())
+    val pokemons = pokemonRepository.shortPokemons
 
     private var _eventNetworkError = MutableLiveData<Boolean>(false)
 
@@ -38,6 +39,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val isNetworkErrorShown: LiveData<Boolean>
         get() = _isNetworkErrorShown
+
+    init {
+        refreshDataFromRepository()
+    }
 
     fun refreshDataFromRepository() {
         viewModelScope.launch {

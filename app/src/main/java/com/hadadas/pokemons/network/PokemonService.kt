@@ -1,5 +1,7 @@
 package com.hadadas.pokemons.network
 
+import com.hadadas.pokemons.abstraction.IPokemonApi
+import com.hadadas.pokemons.network.PokemonService.PokemonNetwork.service
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -8,7 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-class Service {
+class PokemonService : IPokemonApi {
 
     interface IPokemonService {
         @GET("pokemon")
@@ -29,7 +31,11 @@ class Service {
             .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
             .build()
 
-        val pokemonService = retrofit.create(IPokemonService::class.java)
+        val service = retrofit.create(IPokemonService::class.java)
 
     }
+
+    override suspend fun getPokemonOffset(limit: Int, offset: Int) =  service.getPokemonOffset(limit, offset)
+
+    override suspend fun getPokemonDetails(name: String) = service.getPokemonDetails(name)
 }

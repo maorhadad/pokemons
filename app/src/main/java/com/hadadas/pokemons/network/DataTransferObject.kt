@@ -23,7 +23,6 @@ fun NetworkShortPokemonResponse.asShortDatabaseModel(): List<DatabasePokemonShor
     }
 }
 
-
 @JsonClass(generateAdapter = true)
 data class NetworkPokemonResponse(@Json(name = "id") val id: Int,
                                   @Json(name = "name") val name: String,
