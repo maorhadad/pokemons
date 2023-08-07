@@ -19,4 +19,7 @@ interface PokemonDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPokemonInfo(pokemon: DatabasePokemon)
+
+    @Query("SELECT * FROM DatabasePokemon WHERE name = :pokemonName")
+    fun getPokemonDetails(pokemonName: String): DatabasePokemon?
 }

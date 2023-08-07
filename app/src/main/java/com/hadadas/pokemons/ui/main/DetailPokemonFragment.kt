@@ -23,10 +23,12 @@ class DetailPokemonFragment : Fragment() {
 
         binding.lifecycleOwner = this
         binding.pokemonViewModel = viewModel
-        viewModel
-            .getPokemonNameLd()
-            .postValue(arguments?.getString("pokemonName"))
-
+        val name = arguments?.getString("pokemonName")
+        if (name == null) {
+            //TODO Handle error// Show toast// Close fragment
+        } else {
+            viewModel.getPokemonDetails(name)
+        }
         return binding.root
     }
 }
