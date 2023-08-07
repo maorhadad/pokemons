@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonClickListener
@@ -37,7 +38,17 @@ class MainFragment : Fragment(), IPokemonClickListener {
 
         // Giving the binding access to the OverviewViewModel
         binding.viewModel = viewModel
-        setupRecycler()
+
+        pokemonsAdapter = PokemonsAdapterK(viewModel.getViewHolderFactory(), this)
+        binding.deviceList.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = pokemonsAdapter
+        }
+
+        viewModel.eventNetworkError.observe(viewLifecycleOwner) { isNetworkError ->
+            if (isNetworkError) onNetworkError()
+        }
+
         return binding.root
     }
 
@@ -45,20 +56,20 @@ class MainFragment : Fragment(), IPokemonClickListener {
         super.onViewCreated(view, savedInstanceState)
         viewModel.pokemons.observe(viewLifecycleOwner) { pokemons ->
             pokemons?.apply {
+                if(pokemons.isEmpty()) {
+                    viewModel.refreshDataFromRepository()
+                }
                 pokemonsAdapter?.submitList(pokemons)
             }
         }
     }
 
-    private fun setupRecycler() {
-        pokemonsAdapter = PokemonsAdapterK(viewModel.getViewHolderFactory(), this)
-
-        binding.deviceList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = pokemonsAdapter
+    private fun onNetworkError() {
+        if(!viewModel.isNetworkErrorShown.value!!) {
+            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show()
+            viewModel.onNetworkErrorShown()
         }
     }
-
     override fun onPokemonClick(pokemon: IPokemon) {
         Toast
             .makeText(context, "Clicked on ${pokemon.getPokemonName()}", Toast.LENGTH_SHORT)

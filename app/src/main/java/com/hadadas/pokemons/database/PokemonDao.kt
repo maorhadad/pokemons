@@ -13,4 +13,7 @@ interface PokemonDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(pokemons: List<DatabasePokemonShort>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPokemonInfo(pokemon: DatabasePokemon)
 }

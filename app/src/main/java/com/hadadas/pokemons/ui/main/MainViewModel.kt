@@ -21,13 +21,10 @@ import java.io.IOException
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var limit = 100
     private var offset = 0
+    private val delta = 100
 
     private val pokemonRepository = PokemonRepository(getDatabase(application))
     val pokemons = pokemonRepository.pokemons
-
-    init {
-        refreshDataFromRepository()
-    }
 
     private var _eventNetworkError = MutableLiveData<Boolean>(false)
 
@@ -42,13 +39,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isNetworkErrorShown: LiveData<Boolean>
         get() = _isNetworkErrorShown
 
-    private fun refreshDataFromRepository() {
+    fun refreshDataFromRepository() {
         viewModelScope.launch {
             try {
                 pokemonRepository.fetchPokemons(limit, offset)
                 _eventNetworkError.value = false
                 _isNetworkErrorShown.value = false
-
+                offset += delta
             } catch (networkError: IOException) {
                 // Show a Toast error message and hide the progress bar.
                 if (pokemons.value.isNullOrEmpty()) _eventNetworkError.value = true
@@ -74,5 +71,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
+    }
+
+    fun onNetworkErrorShown() {
+        _isNetworkErrorShown.value = true
     }
 }
