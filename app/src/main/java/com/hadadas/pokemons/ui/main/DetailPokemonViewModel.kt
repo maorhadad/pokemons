@@ -1,19 +1,18 @@
 package com.hadadas.pokemons.ui.main
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.hadadas.pokemons.database.getDatabase
+import com.hadadas.pokemons.abstraction.IRepositoryAccess
 import com.hadadas.pokemons.domain.Pokemon
-import com.hadadas.pokemons.network.PokemonService
-import com.hadadas.pokemons.repositories.PokemonRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
 
 class DetailPokemonViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val pokemonRepository = PokemonRepository(getDatabase(application), PokemonService())
+    private val pokemonRepository = (application as IRepositoryAccess).getRepository().pokemonRepository
 
     private val pokemonLd = MutableLiveData<Pokemon>()
     fun getPokemonLd() = pokemonLd
@@ -23,7 +22,9 @@ class DetailPokemonViewModel(application: Application) : AndroidViewModel(applic
             try {
                 pokemonRepository.fetchPokemonsDetails(pokemonName, pokemonLd)
             } catch (networkError: IOException) {
-                // Show a Toast error message and hide the progress bar.
+                Toast
+                    .makeText(getApplication(), "Network error", Toast.LENGTH_LONG)
+                    .show()
             }
         }
 

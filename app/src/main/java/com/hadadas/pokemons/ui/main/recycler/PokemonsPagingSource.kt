@@ -2,12 +2,12 @@ package com.hadadas.pokemons.ui.main.recycler
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.hadadas.pokemons.abstraction.IPokemonRepository
 import com.hadadas.pokemons.domain.PokemonShort
-import com.hadadas.pokemons.repositories.PokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PokemonsPagingSource(private val pokemonRepository: PokemonRepository) : PagingSource<Int, PokemonShort>() {
+class PokemonsPagingSource(private val pokemonRepository: IPokemonRepository) : PagingSource<Int, PokemonShort>() {
     private val delta = 20
     override fun getRefreshKey(state: PagingState<Int, PokemonShort>): Int? {
         return state.anchorPosition?.let { anchorPosition ->

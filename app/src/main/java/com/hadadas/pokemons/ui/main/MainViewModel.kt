@@ -10,23 +10,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonClickListener
-import com.hadadas.pokemons.database.getDatabase
+import com.hadadas.pokemons.abstraction.IRepositoryAccess
 import com.hadadas.pokemons.databinding.PokemonShortBinding
-import com.hadadas.pokemons.network.PokemonService
-import com.hadadas.pokemons.repositories.PokemonRepository
 import com.hadadas.pokemons.ui.main.recycler.BaseViewHolder
 import com.hadadas.pokemons.ui.main.recycler.PokemonShortViewHolder
 import com.hadadas.pokemons.ui.main.recycler.ViewHolderFactory
-import kotlinx.coroutines.launch
-import java.io.IOException
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var limit = 20
     private var offset = 0
     private val delta = 20
 
-    private val pokemonRepository = PokemonRepository(getDatabase(application), PokemonService())
-    val pokemons = pokemonRepository.getAllPokemons().cachedIn(viewModelScope)
+    private val pokemonRepository = (application as IRepositoryAccess).getRepository().pokemonRepository
+    val pokemons = pokemonRepository
+        .getAllPokemons()
+        .cachedIn(viewModelScope)
 
     private var _eventNetworkError = MutableLiveData<Boolean>(false)
 

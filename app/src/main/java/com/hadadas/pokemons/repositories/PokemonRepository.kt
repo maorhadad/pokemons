@@ -7,9 +7,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
-import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonApi
-import com.hadadas.pokemons.abstraction.IRepository
+import com.hadadas.pokemons.abstraction.IPokemonRepository
 import com.hadadas.pokemons.database.PokemonsDb
 import com.hadadas.pokemons.database.asDomainModel
 import com.hadadas.pokemons.domain.Pokemon
@@ -21,12 +20,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class PokemonRepository(private val database: PokemonsDb, private val pokemonApi: IPokemonApi) : IRepository {
+class PokemonRepository(private val database: PokemonsDb, private val pokemonApi: IPokemonApi) : IPokemonRepository {
 
-    suspend fun fetchPokemons(limit: Int, offset: Int): List<PokemonShort> {
+    override suspend fun fetchPokemons(limit: Int, offset: Int): List<PokemonShort> {
         var pokemons = database.pokemonDao.getPokemons(limit, offset)
         if (pokemons.isEmpty()) {
-            Log.d("PokemonRepository", "DB is empty. fetch pokemons from server: $pokemons")
+            Log.d("PokemonRepository", "DB Missing offset $offset. fetch pokemons from server.")
             val pokemonsResponse = pokemonApi.getPokemonOffset(limit, offset)
             pokemons = pokemonsResponse.asShortDatabaseModel()
             database.pokemonDao.insertAll(pokemons)
@@ -34,21 +33,14 @@ class PokemonRepository(private val database: PokemonsDb, private val pokemonApi
         return pokemons.asDomainModel()
     }
 
-    fun  getAllPokemons(): LiveData<PagingData<PokemonShort>> {
-        return Pager(
-                config = PagingConfig(
-                        pageSize = 1,
-                        enablePlaceholders = true,
-                        initialLoadSize = 20
-                ),
-                pagingSourceFactory = {
-                    PokemonsPagingSource(this)
-                }
-                , initialKey = 0//Offset
+    override fun getAllPokemons(): LiveData<PagingData<PokemonShort>> {
+        return Pager(config = PagingConfig(pageSize = 1, enablePlaceholders = true, initialLoadSize = 20), pagingSourceFactory = {
+            PokemonsPagingSource(this)
+        }, initialKey = 0//Offset
         ).liveData
     }
 
-    suspend fun fetchPokemonsDetails(pokemonName: String, pokemon: MutableLiveData<Pokemon>) {
+    override suspend fun fetchPokemonsDetails(pokemonName: String, pokemon: MutableLiveData<Pokemon>) {
         withContext(Dispatchers.IO) {
             var pokemonDetails = database.pokemonDao.getPokemonDetails(pokemonName);
             pokemonDetails?.let { it ->
