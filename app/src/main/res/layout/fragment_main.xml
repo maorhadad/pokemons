@@ -40,5 +40,14 @@
             tools:itemCount="20"
             tools:listitem="@layout/pokemon_short" />
 
+        <ProgressBar
+            android:id="@+id/progressDialog"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:indeterminateTint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

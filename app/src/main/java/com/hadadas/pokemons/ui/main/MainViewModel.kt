@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonClickListener
 import com.hadadas.pokemons.database.getDatabase
@@ -20,12 +21,12 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private var limit = 100
+    private var limit = 20
     private var offset = 0
-    private val delta = 100
+    private val delta = 20
 
     private val pokemonRepository = PokemonRepository(getDatabase(application), PokemonService())
-    val pokemons = pokemonRepository.shortPokemons
+    val pokemons = pokemonRepository.getAllPokemons().cachedIn(viewModelScope)
 
     private var _eventNetworkError = MutableLiveData<Boolean>(false)
 
@@ -41,19 +42,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         get() = _isNetworkErrorShown
 
     init {
-        refreshDataFromRepository()
+        //refreshDataFromRepository()
     }
 
     fun refreshDataFromRepository() {
         viewModelScope.launch {
             try {
-                pokemonRepository.fetchPokemons(limit, offset)
+                pokemonRepository.fetchPokemonsLD(limit, offset)
                 _eventNetworkError.value = false
                 _isNetworkErrorShown.value = false
                 offset += delta
             } catch (networkError: IOException) {
                 // Show a Toast error message and hide the progress bar.
-                if (pokemons.value.isNullOrEmpty()) _eventNetworkError.value = true
+                //if (pokemons.value.isNullOrEmpty()) _eventNetworkError.value = true
             }
         }
     }
