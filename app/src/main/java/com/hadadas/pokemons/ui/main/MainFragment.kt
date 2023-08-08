@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonClickListener
@@ -40,7 +41,7 @@ class MainFragment : Fragment(), IPokemonClickListener {
 
         pokemonsAdapter = PokemonsAdapterK(viewModel.getViewHolderFactory(), this)
         binding?.deviceList?.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = getGridLayoutManager()
             adapter = pokemonsAdapter
         }
 
@@ -102,5 +103,19 @@ class MainFragment : Fragment(), IPokemonClickListener {
         super.onDestroyView()
         binding?.unbind()
         binding = null
+    }
+
+    private fun getGridLayoutManager(): GridLayoutManager {
+        val layoutManager = GridLayoutManager(context, 2)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (pokemonsAdapter?.getItemViewType(position)) {
+                    IPokemon.POKEMON_SHORT -> 1
+                    IPokemon.POKEMON -> 2
+                    else -> -1
+                }
+            }
+        }
+        return layoutManager
     }
 }
