@@ -23,16 +23,8 @@ import kotlinx.coroutines.withContext
 
 class PokemonRepository(private val database: PokemonsDb, private val pokemonApi: IPokemonApi) : IRepository {
 
-    val shortPokemons: MutableLiveData<List<IPokemon>?> = MutableLiveData()
-    suspend fun fetchPokemonsLD(limit: Int, offset: Int) {
-        withContext(Dispatchers.IO) {
-            shortPokemons.postValue(fetchPokemons(limit, offset))
-        }
-    }
-
     suspend fun fetchPokemons(limit: Int, offset: Int): List<PokemonShort> {
         var pokemons = database.pokemonDao.getPokemons(limit, offset)
-        Log.d("PokemonRepository", "before fetchPokemons")
         if (pokemons.isEmpty()) {
             Log.d("PokemonRepository", "DB is empty. fetch pokemons from server: $pokemons")
             val pokemonsResponse = pokemonApi.getPokemonOffset(limit, offset)
@@ -46,7 +38,7 @@ class PokemonRepository(private val database: PokemonsDb, private val pokemonApi
         return Pager(
                 config = PagingConfig(
                         pageSize = 1,
-                        enablePlaceholders = false,
+                        enablePlaceholders = true,
                         initialLoadSize = 20
                 ),
                 pagingSourceFactory = {
@@ -58,7 +50,6 @@ class PokemonRepository(private val database: PokemonsDb, private val pokemonApi
 
     suspend fun fetchPokemonsDetails(pokemonName: String, pokemon: MutableLiveData<Pokemon>) {
         withContext(Dispatchers.IO) {
-            Log.d("PokemonRepository", "get pokemon from DB: $pokemonName")
             var pokemonDetails = database.pokemonDao.getPokemonDetails(pokemonName);
             pokemonDetails?.let { it ->
                 Log.d("PokemonRepository", "get pokemon from DB: $it")

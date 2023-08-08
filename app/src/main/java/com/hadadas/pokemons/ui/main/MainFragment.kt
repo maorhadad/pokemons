@@ -27,19 +27,19 @@ class MainFragment : Fragment(), IPokemonClickListener {
 
     private var pokemonsAdapter: PokemonsAdapterK<PokemonShort>? = null
     private val viewModel: MainViewModel by viewModels()
-    private lateinit var binding: FragmentMainBinding
+    private var binding: FragmentMainBinding? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMainBinding.inflate(inflater)
 
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
-        binding.lifecycleOwner = this
+        binding?.lifecycleOwner = viewLifecycleOwner
 
         // Giving the binding access to the OverviewViewModel
-        binding.viewModel = viewModel
+        binding?.viewModel = viewModel
 
         pokemonsAdapter = PokemonsAdapterK(viewModel.getViewHolderFactory(), this)
-        binding.deviceList.apply {
+        binding?.deviceList?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = pokemonsAdapter
         }
@@ -47,10 +47,10 @@ class MainFragment : Fragment(), IPokemonClickListener {
 
         pokemonsAdapter?.addLoadStateListener { loadState ->
             // show empty list
-            if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) binding.progressDialog.isVisible =
+            if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) binding?.progressDialog?.isVisible =
                 true
             else {
-                binding.progressDialog.isVisible = false
+                binding?.progressDialog?.isVisible = false
                 // If we have an error, show a toast
                 val errorState = when {
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
@@ -71,16 +71,14 @@ class MainFragment : Fragment(), IPokemonClickListener {
         viewModel.eventNetworkError.observe(viewLifecycleOwner) { isNetworkError ->
             if (isNetworkError) onNetworkError()
         }
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            viewModel.pokemons.observe(viewLifecycleOwner) { pokemons ->
-                pokemons?.let {
-                    pokemonsAdapter?.submitData(lifecycle, it)
-                }
+        viewModel.pokemons.observe(viewLifecycleOwner) { pokemons ->
+            pokemons?.let {
+                pokemonsAdapter?.submitData(lifecycle, it)
             }
         }
     }
@@ -98,5 +96,11 @@ class MainFragment : Fragment(), IPokemonClickListener {
 
         val action = MainFragmentDirections.actionMainFragmentToDetailPokemonFragment(pokemon.getPokemonName())
         findNavController().navigate(action)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding?.unbind()
+        binding = null
     }
 }

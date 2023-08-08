@@ -41,23 +41,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isNetworkErrorShown: LiveData<Boolean>
         get() = _isNetworkErrorShown
 
-    init {
-        //refreshDataFromRepository()
-    }
-
-    fun refreshDataFromRepository() {
-        viewModelScope.launch {
-            try {
-                pokemonRepository.fetchPokemonsLD(limit, offset)
-                _eventNetworkError.value = false
-                _isNetworkErrorShown.value = false
-                offset += delta
-            } catch (networkError: IOException) {
-                // Show a Toast error message and hide the progress bar.
-                //if (pokemons.value.isNullOrEmpty()) _eventNetworkError.value = true
-            }
-        }
-    }
 
     fun getViewHolderFactory(): ViewHolderFactory<BaseViewHolder> {
         return object : ViewHolderFactory<BaseViewHolder>() {
