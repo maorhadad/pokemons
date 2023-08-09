@@ -8,17 +8,14 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonClickListener
 import com.hadadas.pokemons.databinding.FragmentMainBinding
 import com.hadadas.pokemons.domain.PokemonShort
 import com.hadadas.pokemons.ui.main.recycler.PokemonsAdapterK
-import kotlinx.coroutines.launch
 
 class MainFragment : Fragment(), IPokemonClickListener {
 
@@ -60,7 +57,7 @@ class MainFragment : Fragment(), IPokemonClickListener {
                     else -> null
                 }
                 errorState?.let {
-                    requireContext()?.let { context ->
+                    requireContext().let { context ->
                         Toast
                             .makeText(context, it.error.toString(), Toast.LENGTH_LONG)
                             .show()
@@ -85,16 +82,15 @@ class MainFragment : Fragment(), IPokemonClickListener {
     }
 
     private fun onNetworkError() {
-        if(!viewModel.isNetworkErrorShown.value!!) {
-            Toast.makeText(activity, "Network Error", Toast.LENGTH_LONG).show()
+        if (!viewModel.isNetworkErrorShown.value!!) {
+            Toast
+                .makeText(activity, "Network Error", Toast.LENGTH_LONG)
+                .show()
             viewModel.onNetworkErrorShown()
         }
     }
-    override fun onPokemonClick(pokemon: IPokemon) {
-        Toast
-            .makeText(context, "Clicked on ${pokemon.getPokemonName()}", Toast.LENGTH_SHORT)
-            .show()
 
+    override fun onPokemonClick(pokemon: IPokemon) {
         val action = MainFragmentDirections.actionMainFragmentToDetailPokemonFragment(pokemon.getPokemonName())
         findNavController().navigate(action)
     }

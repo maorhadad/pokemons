@@ -12,7 +12,7 @@ fun loadImage(view: ImageView, imageUrl: String?) {
             .with(view.context)
             .load(it)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.pokaball2)
+            .placeholder(R.drawable.pokaball_small2)
             .into(view)
     }
 }
