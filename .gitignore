@@ -72,3 +72,4 @@ fastlane/readme.md
 release_keystore.properties
 *.jks
 /github.properties
+app/release/output-metadata.json

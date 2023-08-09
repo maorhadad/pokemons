@@ -5,6 +5,15 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def buildNumber = System.getenv('GITHUB_RUN_NUMBER') as Integer ?: 1
+
+def generateVersionName = { ->
+    println("GITHUB_RUN_NUMBER: ${System.getenv('GITHUB_RUN_NUMBER')}")
+    def BuildMajorVersion = 0
+    def BuildMinorVersion = 0
+    return "${BuildMajorVersion}.${BuildMinorVersion}.${buildNumber}"
+}
+
 android {
     namespace 'com.hadadas.pokemons'
     compileSdk 33
@@ -13,8 +22,26 @@ android {
         applicationId "com.hadadas.pokemons"
         minSdk 29
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode = buildNumber
+        versionName = generateVersionName
+        applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                def outputFile = outputFileName
+                def variantName = variant.name
+                if (outputFile != null && outputFileName.endsWith('.apk')) {
+                    //  Server Build requires a static release.  The apk is then renamed to
+                    //  the release version after the build is completed.
+                    //
+                    //  Server Build injects the versioning parameters, while for debug,
+                    //  the VersionName and VersionCode are set in the manifest.
+                    if (variantName.contains('release')) {
+                        outputFileName = "PokaDex-${variant.versionName}.apk"
+                    } else {
+                        outputFileName = "PokaDex-Debug-${variant.versionName}.apk"
+                    }
+                }
+            }
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
