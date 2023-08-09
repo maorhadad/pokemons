@@ -35,9 +35,9 @@ android {
                     //  Server Build injects the versioning parameters, while for debug,
                     //  the VersionName and VersionCode are set in the manifest.
                     if (variantName.contains('release')) {
-                        outputFileName = "PokaDex-${variant.versionName}.apk"
+                        outputFileName = "PokaDex.apk"
                     } else {
-                        outputFileName = "PokaDex-Debug-${variant.versionName}.apk"
+                        outputFileName = "PokaDex-Debug.apk"
                     }
                 }
             }

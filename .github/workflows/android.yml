@@ -41,9 +41,22 @@ jobs:
           # override default build-tools version (29.0.3) -- optional
           BUILD_TOOLS_VERSION: "33.0.0"
 
+      - name: Delete temp unaligned
+        run: |
+          rm "app/build/outputs/apk/release/PokaDex.apk.unaligned"
+
+      - name: Delete temp idsig
+        run:  |
+          rm  "app/build/outputs/apk/release/PokaDex-signed.apk.idsig"
+
       - name: Delete temp keys
         run:  |
           rm  "app/build/outputs/apk/release/signingKey.jks"
+
+      - name: Delete temp
+        run:  |
+          rm "app/build/outputs/apk/release/PokaDex.apk"
+
 
       - name: Use the Upload Artifact GitHub Action
         uses: actions/upload-artifact@v3.1.2
