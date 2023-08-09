@@ -27,6 +27,5 @@ class DetailPokemonViewModel(application: Application) : AndroidViewModel(applic
                     .show()
             }
         }
-
     }
 }

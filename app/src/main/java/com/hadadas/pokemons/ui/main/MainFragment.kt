@@ -42,7 +42,6 @@ class MainFragment : Fragment(), IPokemonClickListener {
             adapter = pokemonsAdapter
         }
 
-
         pokemonsAdapter?.addLoadStateListener { loadState ->
             // show empty list
             if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) binding?.progressDialog?.isVisible =
@@ -65,10 +64,6 @@ class MainFragment : Fragment(), IPokemonClickListener {
                 }
             }
         }
-
-        viewModel.eventNetworkError.observe(viewLifecycleOwner) { isNetworkError ->
-            if (isNetworkError) onNetworkError()
-        }
         return binding?.root
     }
 
@@ -78,15 +73,6 @@ class MainFragment : Fragment(), IPokemonClickListener {
             pokemons?.let {
                 pokemonsAdapter?.submitData(lifecycle, it)
             }
-        }
-    }
-
-    private fun onNetworkError() {
-        if (!viewModel.isNetworkErrorShown.value!!) {
-            Toast
-                .makeText(activity, "Network Error", Toast.LENGTH_LONG)
-                .show()
-            viewModel.onNetworkErrorShown()
         }
     }
 
