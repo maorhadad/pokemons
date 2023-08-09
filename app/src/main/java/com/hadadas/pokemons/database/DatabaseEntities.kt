@@ -6,7 +6,6 @@ import com.hadadas.pokemons.domain.Pokemon
 import com.hadadas.pokemons.domain.PokemonShort
 import com.hadadas.pokemons.domain.Sprites
 
-
 @Entity
 data class DatabasePokemon constructor(@PrimaryKey val id: Int,
                                        val name: String,

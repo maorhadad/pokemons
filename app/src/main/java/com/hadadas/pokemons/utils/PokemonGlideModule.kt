@@ -8,10 +8,8 @@ import com.bumptech.glide.request.RequestOptions
 
 @GlideModule
 class PokemonGlideModule : AppGlideModule() {
-
     override fun applyOptions(context: Context, builder: GlideBuilder) {
         super.applyOptions(context, builder)
         builder.apply { RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL) }
     }
-
 }

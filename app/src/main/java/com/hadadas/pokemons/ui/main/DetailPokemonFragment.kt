@@ -10,8 +10,6 @@ import androidx.fragment.app.viewModels
 import com.hadadas.pokemons.databinding.FragmentDetailPokemonBinding
 
 class DetailPokemonFragment : Fragment() {
-
-
     companion object {
         fun newInstance() = DetailPokemonFragment()
         const val POKEMON_NAME_KEY = "pokemonName";
@@ -19,7 +17,6 @@ class DetailPokemonFragment : Fragment() {
 
     private val viewModel: DetailPokemonViewModel by viewModels()
     private var binding: FragmentDetailPokemonBinding? = null
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentDetailPokemonBinding.inflate(inflater)
