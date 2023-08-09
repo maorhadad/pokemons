@@ -48,5 +48,5 @@ jobs:
       - name: Use the Upload Artifact GitHub Action
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: PokaDex-signed_${{ github.run_number }}
+          name: PokaDex-signed-${{ github.run_number }}
           path: app/build/outputs/apk/release/
