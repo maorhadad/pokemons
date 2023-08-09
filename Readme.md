@@ -9,10 +9,6 @@ This is an Android app that allows users to explore and learn about various Pok�
 - Use swipe gestures to navigate through the list of Pokémon creatures.
 - The app maintains a local database to cache Pokémon data for offline use.
 
-## Screenshots
-
-Include a few screenshots of your app here to give users a visual idea of how it looks and works.
-
 ## Getting Started
 
 To get started with the project, follow these steps:
