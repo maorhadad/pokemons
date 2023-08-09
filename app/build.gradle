@@ -23,7 +23,7 @@ android {
         minSdk 29
         targetSdk 33
         versionCode = buildNumber
-        versionName = generateVersionName
+        versionName = generateVersionName()
         applicationVariants.all { variant ->
             variant.outputs.all { output ->
                 def outputFile = outputFileName
@@ -35,9 +35,9 @@ android {
                     //  Server Build injects the versioning parameters, while for debug,
                     //  the VersionName and VersionCode are set in the manifest.
                     if (variantName.contains('release')) {
-                        outputFileName = "PokaDex.apk"
+                        outputFileName = "PokaDex-${variant.versionName}.apk"
                     } else {
-                        outputFileName = "PokaDex-Debug.apk"
+                        outputFileName = "PokaDex-Debug-${variant.versionName}.apk"
                     }
                 }
             }
