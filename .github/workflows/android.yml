@@ -45,16 +45,16 @@ jobs:
 
       - name: Delete temp idsig
         run: |
-          find app/build/outputs/apk/release/ -name "PokaDex-*-signed.apk.idsig" -delete
+          find app/build/outputs/apk/release/ -name "PokaDex-*signed.apk.idsig" -delete
         continue-on-error: true
 
       - name: Delete temp unaligned
         run: |
-          find app/build/outputs/apk/release/ -name "PokaDex-*-.apk.unaligned" -delete
+          find app/build/outputs/apk/release/ -name "PokaDex-*.apk.unaligned" -delete
         continue-on-error: true
       - name: Delete temp
         run: |
-          find app/build/outputs/apk/release/ -name "PokaDex-*-.apk" -delete
+          find app/build/outputs/apk/release/ -name "PokaDex-*.apk" -delete
         continue-on-error: true
 
       - name: Use the Upload Artifact GitHub Action
