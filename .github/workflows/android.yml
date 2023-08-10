@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: set up JDK 11
@@ -45,8 +43,48 @@ jobs:
         run:  |
           rm  "app/build/outputs/apk/release/signingKey.jks"
 
+      - name: Delete temp idsig
+        run: |
+          rm "app/build/outputs/apk/release/PokaDex-*-signed.apk.idsig"
+
+      - name: Delete temp unaligned
+          run: |
+            rm "app/build/outputs/apk/release/PokaDex-*-.apk.unaligned"
+
+      - name: Delete temp
+        run: |
+          rm "app/build/outputs/apk/release/PokaDex-*-.apk"
+
       - name: Use the Upload Artifact GitHub Action
         uses: actions/upload-artifact@v3.1.2
         with:
           name: PokaDex-signed-${{ github.run_number }}
           path: app/build/outputs/apk/release/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download APK from build
+        uses: actions/download-artifact@v2
+        with:
+          name: PokaDex-signed-${{ github.run_number }}
+          path: app/build/outputs/apk/release/
+      - name: Create Release
+          id: create_release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ github.ref }}
+            release_name: Release ${{ github.ref }}
+      - name: Upload Release APK
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: apk/PokaDex-*-signed.apk
+          asset_name: PokaDex.apk
+          asset_content_type: application/zip
