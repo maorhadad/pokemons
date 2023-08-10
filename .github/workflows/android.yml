@@ -54,7 +54,7 @@ jobs:
         continue-on-error: true
       - name: Delete temp
         run: |
-          find app/build/outputs/apk/release/ -name "PokaDex-*.apk" -delete
+          find app/build/outputs/apk/release/ -name "PokaDex-*.apk" -not -name "PokaDex-*-signed.apk" -delete
         continue-on-error: true
 
       - name: Use the Upload Artifact GitHub Action
@@ -76,7 +76,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN  }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -84,7 +84,7 @@ jobs:
         id: upload_release_asset
         uses: actions/upload-release-asset@v1.0.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN  }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: apk/PokaDex-*-signed.apk
