@@ -40,7 +40,7 @@ jobs:
           BUILD_TOOLS_VERSION: "33.0.0"
 
       - name: Delete temp keys
-        run:  |
+        run: |
           rm  "app/build/outputs/apk/release/signingKey.jks"
 
       - name: Delete temp idsig
@@ -48,8 +48,8 @@ jobs:
           rm "app/build/outputs/apk/release/PokaDex-*-signed.apk.idsig"
 
       - name: Delete temp unaligned
-          run: |
-            rm "app/build/outputs/apk/release/PokaDex-*-.apk.unaligned"
+        run: |
+          rm "app/build/outputs/apk/release/PokaDex-*-.apk.unaligned"
 
       - name: Delete temp
         run: |
