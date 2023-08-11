@@ -93,6 +93,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./PokaDex-signed-${{ github.run_number }}.zip
-          asset_name: PokaDex-signed-${{ github.run_number }}.zip
+          asset_path: ./app/build/outputs/apk/release/PokaDex-signed-${{ github.run_number }}.apk
+          asset_name: PokaDex-signed-${{ github.run_number }}.apk
           asset_content_type: application/zip
