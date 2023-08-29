@@ -42,7 +42,7 @@ class PokemonRepository(private val database: IPokemonDb, private val pokemonApi
 
     override suspend fun fetchPokemonsDetails(pokemonName: String, pokemon: MutableLiveData<Pokemon>) {
         withContext(Dispatchers.IO) {
-            var pokemonDetails = database.getPokemonDetails(pokemonName);
+             var pokemonDetails = database.getPokemonDetails(pokemonName);
             pokemonDetails?.let { it ->
                 Log.d("PokemonRepository", "get pokemon from DB: $it")
                 pokemon.postValue(it.asDomainModel())
