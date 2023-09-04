@@ -22,12 +22,14 @@ class DetailPokemonFragment : Fragment(), TextToSpeech.OnInitListener {
     private val viewModel: DetailPokemonViewModel by viewModels()
     private var binding: FragmentDetailPokemonBinding? = null
     private var tts: TextToSpeech? = null
+    private var audioManager: AudioManager? = null
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentDetailPokemonBinding.inflate(inflater)
 
         binding?.lifecycleOwner = viewLifecycleOwner
         binding?.pokemonViewModel = viewModel
         tts = TextToSpeech(context, this)
+        audioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val name = arguments?.getString(POKEMON_NAME_KEY)
         if (name == null) {
             Toast
@@ -47,6 +49,6 @@ class DetailPokemonFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
-        viewModel.initNameReader(NameReader(tts, context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager))
+        viewModel.initNameReader(NameReader(tts, audioManager))
     }
 }

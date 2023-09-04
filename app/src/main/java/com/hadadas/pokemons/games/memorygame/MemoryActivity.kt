@@ -2,6 +2,7 @@ package com.hadadas.pokemons.games.memorygame
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.hadadas.pokemons.R
 import com.hadadas.pokemons.games.memorygame.ui.MemoryFragment
 
 class MemoryActivity : AppCompatActivity() {

@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.hadadas.pokemons.abstraction.IPokemon
-import com.hadadas.pokemons.abstraction.IPokemonClickListener
+import com.hadadas.pokemons.abstraction.IItemClickListener
 import com.hadadas.pokemons.abstraction.IRepositoryAccess
 import com.hadadas.pokemons.databinding.PokemonShortBinding
 import com.hadadas.pokemons.ui.main.recycler.BaseViewHolder
@@ -25,7 +25,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return object : ViewHolderFactory<BaseViewHolder>() {
 
             override fun createViewHolder(parent: ViewGroup?,
-                                          clickListener: IPokemonClickListener?,
+                                          clickListener: IItemClickListener?,
                                           @IPokemon.PokemonViewTypes viewType: Int): BaseViewHolder {
                 when (viewType) {
                     IPokemon.POKEMON -> {
