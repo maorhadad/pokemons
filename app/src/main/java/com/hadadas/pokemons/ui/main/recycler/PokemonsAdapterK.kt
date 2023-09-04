@@ -3,10 +3,10 @@ package com.hadadas.pokemons.ui.main.recycler
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import com.hadadas.pokemons.abstraction.IPokemon
-import com.hadadas.pokemons.abstraction.IPokemonClickListener
+import com.hadadas.pokemons.abstraction.IItemClickListener
 
 class PokemonsAdapterK<T : IPokemon>(private val vhFactory: ViewHolderFactory<BaseViewHolder>,
-                                     private val itemClickListener: IPokemonClickListener) :
+                                     private val itemClickListener: IItemClickListener) :
         PagingDataAdapter<T, BaseViewHolder>(PokemonListDiffCallback<T>()) {
 
 
