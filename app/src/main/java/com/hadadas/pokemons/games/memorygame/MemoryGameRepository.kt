@@ -5,16 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : IGameMemory {
 
     var memoryGame: MutableLiveData<MemoryGame?> = MutableLiveData()
     private var _memoryGame: MemoryGame? = null
-    private var  actionResultLD= MutableLiveData<ActionResult>()
-
+    private var actionResultLD = MutableLiveData<ActionResult>()
+    private var currentPlayCards = mutableListOf<Card>()
     override suspend fun startGame(numberOfPokemons: Int) {
-         try {
+        try {
             withContext(Dispatchers.IO) {
                 val offset = (0..950).random()
                 var players: List<Player> = listOf(Player(1, "Player 1", 0))
@@ -50,14 +51,52 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
         TODO("Not yet implemented")
     }
 
-    override fun flipCardAction(card: Card) {
-        _memoryGame?.board?.let {
-            val index = it.cards.indexOf(card)
-            card.setIsFlipped(!card.flipped)
-            val type = if(card.isFlipped()) MemoryGameActionType.FLIP_CARD else MemoryGameActionType.UNFLIP_CARD
-            actionResultLD.postValue(ActionResult( type , index))
+    var isDuringPlay = false
+    override suspend fun flipCardAction(card: Card) {
+        withContext(Dispatchers.IO) {
+            if(currentPlayCards.size >= 2){
+                actionResultLD.postValue(ActionResult(MemoryGameActionType.ERROR, message = "Wait for current play to finish"))
+                return@withContext
+            }
+
+            _memoryGame?.board?.let {
+                val index = it.cards.indexOf(card)
+                if(card.flipped){
+                    actionResultLD.postValue(ActionResult(MemoryGameActionType.ERROR, message = "Card already flipped"))
+                    return@withContext
+                }
+                card.setIsFlipped(true)
+                actionResultLD.postValue(ActionResult(MemoryGameActionType.FLIP_CARD, index))
+                currentPlayCards.add(card)
+                delay(1000)
+                if (currentPlayCards.size >= 2) {
+                    val firstCard = currentPlayCards[0]
+                    val secondCard = currentPlayCards[1]
+                    if (firstCard.pokemon.getPokemonId() == secondCard.pokemon.getPokemonId()) {
+                        firstCard.setIsMatched(true)
+                        secondCard.setIsMatched(true)
+                        val index1 = it.cards.indexOf(firstCard)
+                        val index2 = it.cards.indexOf(secondCard)
+                        it.flippedCards.add(firstCard)
+                        it.flippedCards.add(secondCard)
+                        actionResultLD.postValue(ActionResult(MemoryGameActionType.MATCH_CARDS, index1, index2))
+                        if(it.flippedCards.size == it.cards.size){
+                            _memoryGame?.isGameFinished = true
+                            actionResultLD.postValue(ActionResult(MemoryGameActionType.FINISH_GAME))
+                        }
+                    } else {
+                        firstCard.setIsFlipped(false)
+                        secondCard.setIsFlipped(false)
+                        val index1 = it.cards.indexOf(firstCard)
+                        val index2 = it.cards.indexOf(secondCard)
+                        actionResultLD.postValue(ActionResult(MemoryGameActionType.UNFLIP_CARDS, index1, index2))
+                    }
+                    currentPlayCards.clear()
+                }
+            }
+
+            memoryGame.postValue(_memoryGame)
         }
-        memoryGame.postValue(_memoryGame)
     }
 
     override fun getMemoryGame(): LiveData<MemoryGame?> = memoryGame

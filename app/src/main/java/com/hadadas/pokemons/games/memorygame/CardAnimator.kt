@@ -12,7 +12,11 @@ class CardAnimator : DefaultItemAnimator(){
         payloads: MutableList<Any>
     ): Boolean = true
 
-    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder) = true
+    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder) = false
+
+    override fun getSupportsChangeAnimations(): Boolean {
+        return true
+    }
 
     override fun recordPreLayoutInformation(
         state: RecyclerView.State,
@@ -20,12 +24,13 @@ class CardAnimator : DefaultItemAnimator(){
         changeFlags: Int,
         payloads: MutableList<Any>
     ): ItemHolderInfo {
-        if (changeFlags == FLAG_CHANGED) {
-            return when (payloads[0]) {
-                MemoryGameActionType.FLIP_CARD -> CardItemHolderInfo(true)
-                MemoryGameActionType.UNFLIP_CARD -> CardItemHolderInfo(false)
+        if (changeFlags == FLAG_CHANGED && payloads.isNotEmpty()) {
+            val holder =  when (payloads[0]) {
+                MemoryGameActionType.FLIP_CARD -> CardItemHolderInfo(false)
+                MemoryGameActionType.UNFLIP_CARDS -> CardItemHolderInfo(true)
                 else -> super.recordPreLayoutInformation(state, viewHolder, changeFlags, payloads)
             }
+            return holder
         }
         return super.recordPreLayoutInformation(state, viewHolder, changeFlags, payloads)
     }
@@ -34,15 +39,14 @@ class CardAnimator : DefaultItemAnimator(){
                                newHolder: RecyclerView.ViewHolder,
                                preInfo: ItemHolderInfo,
                                postInfo: ItemHolderInfo): Boolean {
-        val postInfoHolder = postInfo as CardItemHolderInfo
-        val holder = if(postInfoHolder.isFlipped){
-             newHolder as CardUpViewHolder
-        }else{
-            newHolder as CardDownViewHolder
+
+        if(preInfo is CardItemHolderInfo){
+            newHolder as CardBaseViewHolder
+            newHolder.flipCard()
+            return true
         }
 
-        holder.flipCard()
-        return true
+        return super.animateChange(oldHolder, newHolder, preInfo, postInfo)
     }
 
     class CardItemHolderInfo(val isFlipped: Boolean) : ItemHolderInfo()

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -11,7 +12,10 @@ import com.hadadas.pokemons.abstraction.IItemClickListener
 import com.hadadas.pokemons.databinding.CardPokemonDownBinding
 import com.hadadas.pokemons.databinding.CardPokemonUpBinding
 import com.hadadas.pokemons.databinding.FragmentMemoryBinding
-import com.hadadas.pokemons.games.memorygame.*
+import com.hadadas.pokemons.games.memorygame.Card
+import com.hadadas.pokemons.games.memorygame.CardAnimator
+import com.hadadas.pokemons.games.memorygame.ICard
+import com.hadadas.pokemons.games.memorygame.MemoryGameActionType
 import com.hadadas.pokemons.games.memorygame.recycler.CardBaseViewHolder
 import com.hadadas.pokemons.games.memorygame.recycler.CardDownViewHolder
 import com.hadadas.pokemons.games.memorygame.recycler.CardUpViewHolder
@@ -38,8 +42,9 @@ class MemoryFragment : Fragment(), IItemClickListener {
 
         pokemonsAdapter = PokemonsCardAdapterK(getViewHolderFactory(), this)
         binding?.deviceList?.apply {
-            layoutManager = getGridLayoutManager()
             adapter = pokemonsAdapter
+            //itemAnimator = CardAnimator()
+            layoutManager = getGridLayoutManager()
         }
 
 
@@ -56,12 +61,42 @@ class MemoryFragment : Fragment(), IItemClickListener {
                     val cards = mutableListOf<Card?>()
                     cards.addAll(it.board.cards)
                     pokemonsAdapter?.submitList(cards)
+//                    viewModel.memoryGameRepository
+//                        .getMemoryGame()
+//                        .removeObservers(viewLifecycleOwner)
                 }
             }
         viewModel.memoryGameRepository
             .getActionResult()
             .observe(viewLifecycleOwner) { actionResult ->
-                pokemonsAdapter?.notifyItemChanged(actionResult.index, actionResult.type)
+                when (actionResult.type) {
+                    MemoryGameActionType.FLIP_CARD -> {
+                        pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
+                    }
+                    MemoryGameActionType.UNFLIP_CARDS -> {
+                        pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
+                        pokemonsAdapter?.notifyItemChanged(actionResult.secondIndex, actionResult.type)
+                    }
+                    MemoryGameActionType.MATCH_CARDS -> {
+                        Toast
+                            .makeText(requireContext(), "Show Pitsotsation animation", Toast.LENGTH_SHORT)
+                            .show() //TODO show animation
+                    }
+                    MemoryGameActionType.FINISH_GAME -> {
+                        Toast
+                            .makeText(requireContext(), "Show a bigger Pitsotsation animation", Toast.LENGTH_SHORT)
+                            .show() //TODO show animation
+                    }
+                    MemoryGameActionType.ERROR -> {
+                        Toast
+                            .makeText(requireContext(), actionResult.message, Toast.LENGTH_SHORT)
+                            .show() //TODO show animation
+                    }
+                    else -> {
+                        pokemonsAdapter?.notifyDataSetChanged()
+                    }
+                }
+
             }
     }
 
@@ -85,28 +120,22 @@ class MemoryFragment : Fragment(), IItemClickListener {
         viewModel.onCardClick(pokemon as Card)
     }
 
-    fun getViewHolderFactory(): ViewHolderFactory<CardBaseViewHolder> {
+    private fun getViewHolderFactory(): ViewHolderFactory<CardBaseViewHolder> {
         return object : ViewHolderFactory<CardBaseViewHolder>() {
 
             override fun createViewHolder(parent: ViewGroup?,
                                           clickListener: IItemClickListener?,
                                           @ICard.CardsViewTypes viewType: Int): CardBaseViewHolder {
-                when (viewType) {
+                return when (viewType) {
                     ICard.MEMORY_CARD_UP -> {
                         val psb: CardPokemonUpBinding =
                             CardPokemonUpBinding.inflate(LayoutInflater.from(parent?.context), parent, false)
-                        return CardUpViewHolder(psb, clickListener)
+                        CardUpViewHolder(psb, clickListener)
                     }
-                    ICard.MEMORY_CARD_DOWN -> {
-                        val psb: CardPokemonDownBinding =
-                            CardPokemonDownBinding.inflate(LayoutInflater.from(parent?.context), parent, false)
-                        return CardDownViewHolder(psb, clickListener)
-                    }
-
                     else -> {
                         val psb: CardPokemonDownBinding =
                             CardPokemonDownBinding.inflate(LayoutInflater.from(parent?.context), parent, false)
-                        return CardDownViewHolder(psb, clickListener)
+                        CardDownViewHolder(psb, clickListener)
                     }
                 }
             }

@@ -6,6 +6,7 @@ import com.hadadas.pokemons.abstraction.IPokemon
 interface ICard: IPokemon {
     fun isFlipped(): Boolean
     fun setIsFlipped(flipped: Boolean)
+    fun setIsMatched(matched: Boolean)
     fun isMatched(): Boolean
     fun getCardId(): Int
     @CardsViewTypes

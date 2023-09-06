@@ -6,7 +6,7 @@ interface IGameMemory {
     suspend fun startGame(numberOfPokemons: Int)
     fun restartGame()
     fun endGame()
-    fun flipCardAction(card: Card)
+    suspend fun flipCardAction(card: Card)
     fun getMemoryGame(): LiveData<MemoryGame?>
 
     fun getActionResult(): LiveData<ActionResult>
