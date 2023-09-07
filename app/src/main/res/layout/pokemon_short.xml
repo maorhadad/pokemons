@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.hadadas.pokemons.abstraction.IPokemonClickListener" />
+            type="com.hadadas.pokemons.abstraction.IItemClickListener" />
 
         <variable
             name="pokemonShort"
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small_margin"
-            android:onClick="@{() -> clickListener.onPokemonClick(pokemonShort)}"
+            android:onClick="@{() -> clickListener.onItemClick(pokemonShort)}"
             android:outlineProvider="bounds"
             android:padding="@dimen/default_padding">
 

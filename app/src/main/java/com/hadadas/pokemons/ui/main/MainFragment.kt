@@ -12,12 +12,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.hadadas.pokemons.abstraction.IPokemon
-import com.hadadas.pokemons.abstraction.IPokemonClickListener
+import com.hadadas.pokemons.abstraction.IItemClickListener
 import com.hadadas.pokemons.databinding.FragmentMainBinding
 import com.hadadas.pokemons.domain.PokemonShort
 import com.hadadas.pokemons.ui.main.recycler.PokemonsAdapterK
 
-class MainFragment : Fragment(), IPokemonClickListener {
+class MainFragment : Fragment(), IItemClickListener {
 
     companion object {
         fun newInstance() = MainFragment()
@@ -76,8 +76,9 @@ class MainFragment : Fragment(), IPokemonClickListener {
         }
     }
 
-    override fun onPokemonClick(pokemon: IPokemon) {
-        val action = MainFragmentDirections.actionMainFragmentToDetailPokemonFragment(pokemon.getPokemonName())
+    override fun onItemClick(pokemon: Any) {
+        val action = MainFragmentDirections
+            .actionMainFragmentToDetailPokemonFragment((pokemon as IPokemon).getPokemonName())
         findNavController().navigate(action)
     }
 
