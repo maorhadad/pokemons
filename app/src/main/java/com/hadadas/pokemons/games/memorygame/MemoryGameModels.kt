@@ -78,4 +78,4 @@ enum class MemoryGameCommandType {
 
 data class MemoryGameCommandData(val players: List<Player>, val board: Board, val error: MemoryGameError)
 
-data class ActionResult(val type: MemoryGameActionType, val firstIndex: Int = -1, val secondIndex: Int = -1, val message: String = "")
+data class ActionResult(val type: MemoryGameActionType, val firstIndex: Int = 0, val secondIndex: Int = 1, val message: String = "")

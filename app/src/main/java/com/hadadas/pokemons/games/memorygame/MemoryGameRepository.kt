@@ -52,56 +52,61 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
     }
 
     var isDuringPlay = false
-    override suspend fun flipCardAction(card: Card) {
+    override suspend fun flipCardAction(card: Card, index: Int) {
+        if (currentPlayCards.size >= 2) {
+            actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Wait for current play to finish"))
+        }
+        if (card.flipped) {
+            actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Card already flipped"))
+        }
         withContext(Dispatchers.IO) {
-            if(currentPlayCards.size >= 2){
-                actionResultLD.postValue(ActionResult(MemoryGameActionType.ERROR, message = "Wait for current play to finish"))
-                return@withContext
-            }
-
-            _memoryGame?.board?.let {
-                val index = it.cards.indexOf(card)
-                if(card.flipped){
-                    actionResultLD.postValue(ActionResult(MemoryGameActionType.ERROR, message = "Card already flipped"))
-                    return@withContext
-                }
-                card.setIsFlipped(true)
-                actionResultLD.postValue(ActionResult(MemoryGameActionType.FLIP_CARD, index))
-                currentPlayCards.add(card)
-                delay(1000)
+            _memoryGame?.board?.apply {
+                flipCard(cards, card)
+                delay(1700)
                 if (currentPlayCards.size >= 2) {
                     val firstCard = currentPlayCards[0]
                     val secondCard = currentPlayCards[1]
                     if (firstCard.pokemon.getPokemonId() == secondCard.pokemon.getPokemonId()) {
                         firstCard.setIsMatched(true)
                         secondCard.setIsMatched(true)
-                        val index1 = it.cards.indexOf(firstCard)
-                        val index2 = it.cards.indexOf(secondCard)
-                        it.flippedCards.add(firstCard)
-                        it.flippedCards.add(secondCard)
-                        actionResultLD.postValue(ActionResult(MemoryGameActionType.MATCH_CARDS, index1, index2))
-                        if(it.flippedCards.size == it.cards.size){
-                            _memoryGame?.isGameFinished = true
-                            actionResultLD.postValue(ActionResult(MemoryGameActionType.FINISH_GAME))
-                        }
+                        val index1 = cards.indexOf(firstCard)
+                        val index2 = cards.indexOf(secondCard)
+                        flippedCards.add(firstCard)
+                        flippedCards.add(secondCard)
+                        actionResultLD.postValue(ActionResult(type = MemoryGameActionType.MATCH_CARDS, index1, index2))
+
                     } else {
                         firstCard.setIsFlipped(false)
                         secondCard.setIsFlipped(false)
-                        val index1 = it.cards.indexOf(firstCard)
-                        val index2 = it.cards.indexOf(secondCard)
-                        actionResultLD.postValue(ActionResult(MemoryGameActionType.UNFLIP_CARDS, index1, index2))
+                        val index1 = cards.indexOf(firstCard)
+                        val index2 = cards.indexOf(secondCard)
+                        actionResultLD.postValue(ActionResult(type = MemoryGameActionType.UNFLIP_CARDS, index1, index2))
                     }
                     currentPlayCards.clear()
                 }
             }
+            checkForEndGame()
+        }
+    }
 
-            memoryGame.postValue(_memoryGame)
+    private fun flipCard(cards: MutableList<Card>, card: Card) {
+        val index = cards.indexOf(card)
+        card.setIsFlipped(true)
+        currentPlayCards.add(card)
+        actionResultLD.postValue(ActionResult(type = MemoryGameActionType.FLIP_CARD, firstIndex = index))
+    }
+
+    private fun checkForEndGame() {
+        _memoryGame?.board?.apply {
+            if (flippedCards.size == cards.size) {
+                _memoryGame?.isGameFinished = true
+                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.FINISH_GAME))
+            }
         }
     }
 
     override fun getMemoryGame(): LiveData<MemoryGame?> = memoryGame
     override fun getActionResult(): LiveData<ActionResult> = actionResultLD
-
 
     private fun transformToCard(id: Int, pokemon: IPokemon): Card {
         return Card(id, pokemon, false, false)

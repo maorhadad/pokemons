@@ -22,6 +22,6 @@ class PokemonsCardAdapterK<T : ICard>(private val vhFactory: ViewHolderFactory<C
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getItem(position)?.getCardType() ?: ICard.MEMORY_CARD_DOWN
+        return  ICard.MEMORY_CARD
     }
 }

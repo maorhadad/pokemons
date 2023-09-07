@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -16,49 +17,84 @@
         <import type="android.view.View" />
     </data>
 
-    <androidx.cardview.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cardViewUp"
-        android:maxWidth="100dp"
-        android:maxHeight="100dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginStart="@dimen/small_margin"
         android:layout_marginTop="@dimen/small_margin"
         android:layout_marginEnd="@dimen/small_margin"
-        android:elevation="8dp"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardBackgroundColor="@color/colorYellow50">
+        android:layout_marginBottom="@dimen/small_margin"
+        >
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/llCardUp"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_gravity="center"
+            app:cardElevation="@dimen/default_padding"
             android:onClick="@{() -> clickListener.onItemClick(card)}"
-            android:outlineProvider="bounds"
-            android:padding="@dimen/small_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardBackgroundColor="@color/colorYellow"
+            card_view:cardCornerRadius="8dp"
+            android:padding="@dimen/default_padding">
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:outlineProvider="bounds">
+
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    app:imageUrl="@{card.getImageURL()}"
+                    tools:src="@drawable/pokaball_small2" />
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="@{card.getPokemonName()}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                    android:textStyle="bold"
+                    tools:text="Balbasaur" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/llCardBack"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="vertical">
+            app:cardElevation="@dimen/default_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:onClick="@{() -> clickListener.onItemClick(card)}"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            card_view:cardBackgroundColor="@color/colorYellow"
+            card_view:cardCornerRadius="8dp"
+            android:padding="@dimen/default_padding">
 
             <ImageView
-                android:id="@+id/profileImageView"
+                android:id="@+id/backImageView"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                app:imageUrl="@{card.getImageURL()}"
-                tools:src="@drawable/pokaball_small2" />
+                android:layout_gravity="center"
+                android:src="@drawable/pokaball_small2" />
+        </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:maxLines="1"
-                android:text="@{card.getPokemonName()}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textStyle="bold"
-                tools:text="Balbasaur" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

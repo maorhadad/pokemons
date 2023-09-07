@@ -1,5 +1,6 @@
 package com.hadadas.pokemons.games.memorygame.recycler
 
+import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import com.hadadas.pokemons.abstraction.IItemClickListener
@@ -10,20 +11,38 @@ import com.hadadas.pokemons.games.memorygame.ICard
 class CardUpViewHolder(private val cardUpBinding: CardPokemonUpBinding,
                        private val iClickListener: IItemClickListener?) : CardBaseViewHolder(cardUpBinding.root) {
 
-    init {
-        anim =
-            AnimatorInflater.loadAnimator(cardUpBinding.root.context, com.hadadas.pokemons.R.animator.card_flip_right_in) as AnimatorSet
-        anim?.addListener(this)
-    }
+    private var frontAnimation: Animator? = null
+    private var animFlipHide: Animator? = null
+
 
     override fun bind(card: ICard?, position: Int) {
-        anim?.setTarget(cardUpBinding.cardViewUp)
         cardUpBinding.card = card
         cardUpBinding.clickListener = iClickListener
-        anim?.start()
     }
 
-    override fun flipCard() {
+    private fun flipCardUp() {
+        frontAnimation?.setTarget(cardUpBinding.llCardUp)
+        animFlipHide?.setTarget(cardUpBinding.llCardBack)
+        frontAnimation?.start()
+        animFlipHide?.start()
+    }
 
+    private fun flipCardDown() {
+        frontAnimation?.setTarget(cardUpBinding.llCardBack)
+        animFlipHide?.setTarget(cardUpBinding.llCardUp)
+        animFlipHide?.start()
+        frontAnimation?.start()
+    }
+
+    override fun animateFlip(isPreViewFlipped: Boolean) {
+        frontAnimation = AnimatorInflater.loadAnimator(cardUpBinding.root.context, com.hadadas.pokemons.R.animator.card_flip_front_in) as AnimatorSet
+        animFlipHide = AnimatorInflater.loadAnimator(cardUpBinding.root.context, com.hadadas.pokemons.R.animator.card_flip_back) as AnimatorSet
+        frontAnimation?.addListener(this)
+        animFlipHide?.addListener(this)
+        if (isPreViewFlipped){
+            flipCardDown()
+        }else{
+            flipCardUp()
+        }
     }
 }

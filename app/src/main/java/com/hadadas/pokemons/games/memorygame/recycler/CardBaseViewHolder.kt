@@ -8,22 +8,25 @@ import com.hadadas.pokemons.games.memorygame.ICard
 
 abstract class CardBaseViewHolder(itemView: View) : ABVIewHolder(itemView), Animator.AnimatorListener {
 
-    public var anim: Animator? = null
     abstract fun bind(card: ICard?, position: Int)
-    abstract fun flipCard()
     override fun onAnimationStart(animation: Animator) {
         Log.d("CardBaseViewHolder", "onAnimationStart")
     }
 
     override fun onAnimationEnd(animation: Animator) {
         Log.d("CardBaseViewHolder", "onAnimationEnd")
+        animation.removeAllListeners()
     }
 
     override fun onAnimationCancel(animation: Animator) {
         Log.d("CardBaseViewHolder", "onAnimationCancel")
+        animation.removeAllListeners()
     }
 
     override fun onAnimationRepeat(animation: Animator) {
         Log.d("CardBaseViewHolder", "onAnimationRepeat")
+
     }
+
+    abstract fun animateFlip(isPreViewFlipped: Boolean)
 }

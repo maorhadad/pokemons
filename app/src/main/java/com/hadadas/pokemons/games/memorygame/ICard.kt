@@ -14,6 +14,7 @@ interface ICard: IPokemon {
 
     companion object {
 
+        const val MEMORY_CARD = 2
         const val MEMORY_CARD_DOWN = 0
         const val MEMORY_CARD_UP = 1
     }

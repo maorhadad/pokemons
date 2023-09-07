@@ -26,9 +26,9 @@ class MemoryGameViewModel(application: Application) : AndroidViewModel(applicati
     }
 
 
-    fun onCardClick(card: Card) {
+    fun onCardClick(card: Card, index: Int) {
         viewModelScope.launch {
-            memoryGameRepository.flipCardAction(card)
+            memoryGameRepository.flipCardAction(card, index)
         }
     }
 }
