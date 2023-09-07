@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hadadas.pokemons.abstraction.IRepositoryAccess
 import com.hadadas.pokemons.games.memorygame.Card
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -27,7 +28,7 @@ class MemoryGameViewModel(application: Application) : AndroidViewModel(applicati
 
 
     fun onCardClick(card: Card, index: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             memoryGameRepository.flipCardAction(card, index)
         }
     }

@@ -1,10 +1,6 @@
 package com.hadadas.pokemons.games.memorygame
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.graphics.Color
 import android.util.Log
-import android.view.animation.AnimationSet
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.hadadas.pokemons.games.memorygame.recycler.CardBaseViewHolder
@@ -34,12 +30,12 @@ class CardAnimator : DefaultItemAnimator(){
                 payloads.forEach {
                     when (it) {
                         MemoryGameActionType.FLIP_CARD -> {
-                            Log.d("CardAnimator", "CardItemHolderInfo(false)")
-                            return CardItemHolderInfo(false)
+                            Log.d("CardAnimator", "CardItemHolderPreviousInfo(false)")
+                            return CardItemHolderPreviousInfo(false)
                         }
                         MemoryGameActionType.UNFLIP_CARDS -> {
-                            Log.d("CardAnimator", "CardItemHolderInfo(true)")
-                            return CardItemHolderInfo(true)
+                            Log.d("CardAnimator", "CardItemHolderPreviousInfo(true)")
+                            return CardItemHolderPreviousInfo(true)
                         }
                     }
                 }
@@ -70,7 +66,7 @@ class CardAnimator : DefaultItemAnimator(){
                                preInfo: ItemHolderInfo,
                                postInfo: ItemHolderInfo): Boolean {
 
-        if (preInfo is CardItemHolderInfo) {
+        if (preInfo is CardItemHolderPreviousInfo) {
             (newHolder as CardBaseViewHolder).animateFlip(preInfo.isFlipped)
             return true
         }
@@ -79,5 +75,5 @@ class CardAnimator : DefaultItemAnimator(){
     }
 
 
-    class CardItemHolderInfo(val isFlipped: Boolean) : ItemHolderInfo()
+    class CardItemHolderPreviousInfo(val isFlipped: Boolean) : ItemHolderInfo()
 }

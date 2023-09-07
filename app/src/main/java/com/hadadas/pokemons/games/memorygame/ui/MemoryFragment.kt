@@ -1,9 +1,14 @@
 package com.hadadas.pokemons.games.memorygame.ui
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,6 +24,7 @@ import com.hadadas.pokemons.games.memorygame.recycler.CardBaseViewHolder
 import com.hadadas.pokemons.games.memorygame.recycler.CardUpViewHolder
 import com.hadadas.pokemons.games.memorygame.recycler.PokemonsCardAdapterK
 import com.hadadas.pokemons.ui.main.recycler.ViewHolderFactory
+
 
 class MemoryFragment : Fragment(), IItemClickListener {
 
@@ -45,8 +51,6 @@ class MemoryFragment : Fragment(), IItemClickListener {
             layoutManager = getGridLayoutManager()
             setHasFixedSize(true)
         }
-
-
         return binding?.root
     }
 
@@ -70,16 +74,20 @@ class MemoryFragment : Fragment(), IItemClickListener {
             .observe(viewLifecycleOwner) { actionResult ->
                 when (actionResult.type) {
                     MemoryGameActionType.FLIP_CARD -> {
+                        Log.w("MemoryFragment", "FLIP_CARD ${actionResult.firstIndex} ")
                         pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
                     }
                     MemoryGameActionType.UNFLIP_CARDS -> {
-                        pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
-                        pokemonsAdapter?.notifyItemChanged(actionResult.secondIndex, actionResult.type)
+                        Handler(requireContext().mainLooper).postDelayed({
+                            Log.w("MemoryFragment", "UNFLIP_CARDS ${actionResult.firstIndex} ${actionResult.secondIndex}")
+                            pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
+                            pokemonsAdapter?.notifyItemChanged(actionResult.secondIndex, actionResult.type)
+                        }, 1000)
                     }
                     MemoryGameActionType.MATCH_CARDS -> {
                         Toast
                             .makeText(requireContext(), "Show Pitsotsation animation", Toast.LENGTH_SHORT)
-                            .show() //TODO show animation
+                            .show()
                     }
                     MemoryGameActionType.FINISH_GAME -> {
                         Toast
@@ -89,25 +97,44 @@ class MemoryFragment : Fragment(), IItemClickListener {
                     MemoryGameActionType.ERROR -> {
                         Toast
                             .makeText(requireContext(), actionResult.message, Toast.LENGTH_SHORT)
-                            .show() //TODO show animation
+                            .show()
                     }
                     else -> {
                         pokemonsAdapter?.notifyDataSetChanged()
                     }
                 }
-
             }
     }
 
 
     private fun getGridLayoutManager(): GridLayoutManager {
-        val layoutManager = GridLayoutManager(context, 4)
+        val layoutManager = GridLayoutManager(context, calculateSpanCount(requireContext(), 120))
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return 1
             }
         }
         return layoutManager
+    }
+
+    private fun calculateSpanCount(context: Context, viewSizeDp: Int): Int {
+        // Get the screen width in pixels
+        val displayMetrics = DisplayMetrics()
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager?
+        windowManager?.defaultDisplay?.getMetrics(displayMetrics)
+        val screenWidthPixels = displayMetrics.widthPixels
+
+        // Convert view size from dp to pixels
+        val density = context.resources.displayMetrics.density
+        val viewSizePixels = (viewSizeDp * density).toInt()
+
+        // Calculate the span count based on screen width and view size
+        var spanCount = screenWidthPixels / viewSizePixels
+
+        // Ensure the minimum span count is 1
+        spanCount = Math.max(spanCount, 1)
+        Log.d("MemoryFragment", "calculateSpanCount: $spanCount")
+        return spanCount
     }
 
     override fun onStart() {

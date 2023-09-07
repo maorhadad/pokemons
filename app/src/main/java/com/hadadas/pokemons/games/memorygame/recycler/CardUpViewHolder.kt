@@ -37,8 +37,32 @@ class CardUpViewHolder(private val cardUpBinding: CardPokemonUpBinding,
     override fun animateFlip(isPreViewFlipped: Boolean) {
         frontAnimation = AnimatorInflater.loadAnimator(cardUpBinding.root.context, com.hadadas.pokemons.R.animator.card_flip_front_in) as AnimatorSet
         animFlipHide = AnimatorInflater.loadAnimator(cardUpBinding.root.context, com.hadadas.pokemons.R.animator.card_flip_back) as AnimatorSet
-        frontAnimation?.addListener(this)
-        animFlipHide?.addListener(this)
+        frontAnimation?.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {}
+
+            override fun onAnimationEnd(animation: Animator) {
+                animation.removeAllListeners()
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                animation.removeAllListeners()
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {}
+        })
+        animFlipHide?.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {}
+
+            override fun onAnimationEnd(animation: Animator) {
+                animation.removeAllListeners()
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                animation.removeAllListeners()
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {}
+        })
         if (isPreViewFlipped){
             flipCardDown()
         }else{
