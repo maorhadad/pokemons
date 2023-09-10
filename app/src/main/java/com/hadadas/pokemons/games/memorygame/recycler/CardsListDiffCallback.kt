@@ -7,11 +7,12 @@ import com.hadadas.pokemons.games.memorygame.MemoryGameActionType
 class CardsListDiffCallback<T : ICard> : DiffUtil.ItemCallback<T>() {
     override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
         return oldItem.getCardId() == newItem.getCardId()
+                && oldItem.getPokemonId() == newItem.getPokemonId()
     }
 
     override fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
-        return oldItem.getCardId() == newItem.getCardId()
-                && oldItem.isFlipped() == newItem.isFlipped()
+        return oldItem.isFlipped() == newItem.isFlipped()
+                && oldItem.isMatched() == newItem.isMatched()
     }
 
     override fun getChangePayload(oldItem: T, newItem: T): Any? {

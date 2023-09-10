@@ -37,7 +37,7 @@ class MainFragment : Fragment(), IItemClickListener {
         binding?.viewModel = viewModel
 
         pokemonsAdapter = PokemonsAdapterK(viewModel.getViewHolderFactory(), this)
-        binding?.deviceList?.apply {
+        binding?.pokaList?.apply {
             layoutManager = getGridLayoutManager()
             adapter = pokemonsAdapter
         }

@@ -8,7 +8,7 @@ import com.hadadas.pokemons.games.memorygame.ICard
 
 abstract class CardBaseViewHolder(itemView: View) : ABVIewHolder(itemView) {
 
-    abstract fun bind(card: ICard?, position: Int)
+    abstract fun bind(card: ICard, position: Int)
 
-    abstract fun animateFlip(isPreViewFlipped: Boolean)
+    abstract fun animateFlip(isPreViewFlipped: Boolean, onAnimationStart:  () -> Unit, onAnimationDone:  () -> Unit)
 }

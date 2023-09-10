@@ -10,4 +10,5 @@
     <string name="title_pokadex">PokaDex</string>
     <string name="pokemon_id_row">ID</string>
     <string name="pokemon_name_row">Name</string>
+    <string name="restart">Restart</string>
 </resources>

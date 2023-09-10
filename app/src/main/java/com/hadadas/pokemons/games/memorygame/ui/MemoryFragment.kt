@@ -45,12 +45,16 @@ class MemoryFragment : Fragment(), IItemClickListener {
         binding?.viewModel = viewModel
 
         pokemonsAdapter = PokemonsCardAdapterK(getViewHolderFactory(), this)
-        binding?.deviceList?.apply {
+        binding?.pokaList?.apply {
             adapter = pokemonsAdapter
             itemAnimator = CardAnimator()
             layoutManager = getGridLayoutManager()
-            setHasFixedSize(true)
         }
+        binding?.btRestartGame?.setOnClickListener {
+            pokemonsAdapter?.submitList(null)
+            viewModel.restartGame()
+        }
+
         return binding?.root
     }
 
@@ -61,12 +65,8 @@ class MemoryFragment : Fragment(), IItemClickListener {
             .getMemoryGame()
             .observe(viewLifecycleOwner) { memoryGame ->
                 memoryGame?.let {
-                    val cards = mutableListOf<Card?>()
-                    cards.addAll(it.board.cards)
-                    pokemonsAdapter?.submitList(cards)
-                    viewModel.memoryGameRepository
-                        .getMemoryGame()
-                        .removeObservers(viewLifecycleOwner)
+                    pokemonsAdapter?.submitList(it.board.cards.toMutableList())
+
                 }
             }
         viewModel.memoryGameRepository
@@ -93,6 +93,11 @@ class MemoryFragment : Fragment(), IItemClickListener {
                         Toast
                             .makeText(requireContext(), "Show a bigger Pitsotsation animation", Toast.LENGTH_SHORT)
                             .show() //TODO show animation
+                    }
+                    MemoryGameActionType.RESTART_GAME -> {
+                        Toast
+                            .makeText(requireContext(), "Restart Game", Toast.LENGTH_SHORT)
+                            .show()
                     }
                     MemoryGameActionType.ERROR -> {
                         Toast

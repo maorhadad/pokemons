@@ -6,17 +6,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hadadas.pokemons.games.memorygame.recycler.CardBaseViewHolder
 
 class CardAnimator : DefaultItemAnimator(){
-    override fun canReuseUpdatedViewHolder(
-        viewHolder: RecyclerView.ViewHolder,
-        payloads: MutableList<Any>
-    ): Boolean = true
 
-    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder) = true
+    override fun canReuseUpdatedViewHolder(
+        viewHolder: RecyclerView.ViewHolder, payloads: MutableList<Any>
+    ) = true
+
+    override fun canReuseUpdatedViewHolder(
+        viewHolder: RecyclerView.ViewHolder)= true
+
 
     override fun getSupportsChangeAnimations(): Boolean {
         return true
     }
-
     override fun recordPreLayoutInformation(
         state: RecyclerView.State,
         viewHolder: RecyclerView.ViewHolder,
@@ -67,7 +68,11 @@ class CardAnimator : DefaultItemAnimator(){
                                postInfo: ItemHolderInfo): Boolean {
 
         if (preInfo is CardItemHolderPreviousInfo) {
-            (newHolder as CardBaseViewHolder).animateFlip(preInfo.isFlipped)
+            (newHolder as CardBaseViewHolder).animateFlip(preInfo.isFlipped, onAnimationStart = {
+                dispatchAnimationStarted(newHolder)
+            }, onAnimationDone = {
+                dispatchAnimationFinished(newHolder)
+            })
             return true
         }
 
@@ -75,5 +80,10 @@ class CardAnimator : DefaultItemAnimator(){
     }
 
 
+
+
     class CardItemHolderPreviousInfo(val isFlipped: Boolean) : ItemHolderInfo()
+
+
+
 }

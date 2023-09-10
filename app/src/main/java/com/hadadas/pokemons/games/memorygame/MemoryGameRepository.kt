@@ -11,35 +11,17 @@ import kotlinx.coroutines.withContext
 
 class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : IGameMemory {
 
-    var memoryGame: MutableLiveData<MemoryGame?> = MutableLiveData()
+    private var memoryGame: MutableLiveData<MemoryGame?> = MutableLiveData()
     private var _memoryGame: MemoryGame? = null
     private var actionResultLD = MutableLiveData<ActionResult>()
     private var currentPlayCards = mutableListOf<Card>()
-    override suspend fun startGame(numberOfPokemons: Int) {
+    private var numberOfPokemons = 0
+
+    override suspend fun startGame(_numberOfPokemons: Int) {
         try {
             withContext(Dispatchers.IO) {
-                val offset = (0..950).random()
-                var players: List<Player> = listOf(Player(1, "Player 1", 0))
-                var cardId = 0
-
-                val cards: MutableList<Card> = pokemonRepository
-                    .fetchPokemons(numberOfPokemons, offset)
-                    .map {
-                        cardId += 1
-                        transformToCard(cardId, it)
-                    }
-                    .toMutableList()
-                val cards2 = mutableListOf<Card>()
-                cards.forEach {
-                    cardId += 1
-                    cards2.add(transformToCard(cardId, it.pokemon))
-                }
-                cards.addAll(cards2)
-                if (!BuildConfig.DEBUG) {
-                    cards.shuffle()
-                }
-                val board = Board(cards = cards, flippedCards = mutableListOf(), isBoardFinished = false)
-                _memoryGame = MemoryGame(players = players, board = board, isGameFinished = false)
+                numberOfPokemons = _numberOfPokemons
+                _memoryGame = generateGameBoard(numberOfPokemons)
                 memoryGame.postValue(_memoryGame)
             }
         } catch (e: Exception) {
@@ -47,8 +29,43 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
         }
     }
 
-    override fun restartGame() {
-        TODO("Not yet implemented")
+    private suspend fun generateGameBoard(numberOfPokemons: Int): MemoryGame {
+        val offset = (0..950).random()
+        val players: List<Player> = listOf(Player(1, "Player 1", 0))
+        var cardId = 0
+        currentPlayCards.clear()
+
+        val cards: MutableList<Card> = pokemonRepository
+            .fetchPokemons(numberOfPokemons, offset)
+            .map {
+                cardId += 1
+                transformToCard(cardId, it)
+            }
+            .toMutableList()
+        val cards2 = mutableListOf<Card>()
+        cards.forEach {
+            cardId += 1
+            cards2.add(transformToCard(cardId, it.pokemon))
+        }
+        cards.addAll(cards2)
+        if (!BuildConfig.DEBUG) {
+            cards.shuffle()
+        }
+        val board = Board(cards = cards, flippedCards = mutableListOf(), isBoardFinished = false)
+        return MemoryGame(players = players, board = board, isGameFinished = false)
+    }
+
+    override suspend fun restartGame() {
+        try {
+            withContext(Dispatchers.IO) {
+                Log.d("MemoryGameRepository", "restartGame: ")
+                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.RESTART_GAME, message = "Game started"))
+                _memoryGame = generateGameBoard(numberOfPokemons)
+                memoryGame.postValue(_memoryGame)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun endGame() {
@@ -56,21 +73,21 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
     }
 
     override suspend fun flipCardAction(card: Card, index: Int) {
-            _memoryGame?.board?.apply {
-                if (currentPlayCards.size >= 2) {
-                    Log.d("MemoryGameRepository", "flipCardAction: currentPlayCards.size >= 2. Retruning")
-                    actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Wait for current play to finish"))
-                    return@apply
-                }
-                if (card.flipped) {
-                    Log.d("MemoryGameRepository", "flipCardAction: card.flipped. Retruning")
-                    actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Card already flipped"))
-                    return@apply
-                }
-                flipCard(cards, card)
-                checkUserPlay(cards, flippedCards)
-                checkForEndGame(cards, flippedCards)
+        _memoryGame?.board?.apply {
+            if (currentPlayCards.size >= 2) {
+                Log.d("MemoryGameRepository", "flipCardAction: currentPlayCards.size >= 2. Retruning")
+                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Wait for current play to finish"))
+                return@apply
             }
+            if (card.flipped) {
+                Log.d("MemoryGameRepository", "flipCardAction: card.flipped. Retruning")
+                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Card already flipped"))
+                return@apply
+            }
+            flipCard(cards, card)
+            checkUserPlay(cards, flippedCards)
+            checkForEndGame(cards, flippedCards)
+        }
     }
 
     private fun flipCard(cards: MutableList<Card>, card: Card) {

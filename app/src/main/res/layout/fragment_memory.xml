@@ -12,19 +12,28 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/memory"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         tools:context=".games.memorygame.ui.MemoryFragment">
 
+        <Button
+            android:text="@string/restart"
+            android:id="@+id/btRestartGame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/deviceList"
+            android:id="@+id/pokaList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btRestartGame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="20"
+            android:gravity="center"
             tools:listitem="@layout/pokemon_short"
             android:overScrollMode="ifContentScrolls"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
