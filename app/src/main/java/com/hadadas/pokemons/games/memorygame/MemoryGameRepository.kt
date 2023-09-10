@@ -7,6 +7,7 @@ import com.hadadas.pokemons.BuildConfig
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : IGameMemory {
@@ -59,9 +60,20 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
         try {
             withContext(Dispatchers.IO) {
                 Log.d("MemoryGameRepository", "restartGame: ")
-                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.RESTART_GAME, message = "Game started"))
+                _memoryGame?.board?.apply {
+                    cards.forEachIndexed() { index, it ->
+                        if(it.flipped) {
+                            it.setIsFlipped(false)
+                            actionResultLD.postValue((ActionResult(type = MemoryGameActionType.FLIP_CARD_DOWN, index)))
+                            delay(100)
+                        }
+                    }
+                    flippedCards.clear()
+                }
+                delay(800)
                 _memoryGame = generateGameBoard(numberOfPokemons)
                 memoryGame.postValue(_memoryGame)
+                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.RESTART_GAME, message = "Restarted"))
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -95,7 +107,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
         val index = cards.indexOf(card)
         card.setIsFlipped(true)
         currentPlayCards.add(card)
-        actionResultLD.value = ActionResult(type = MemoryGameActionType.FLIP_CARD, firstIndex = index)
+        actionResultLD.value = ActionResult(type = MemoryGameActionType.FLIP_CARD_UP, firstIndex = index)
     }
 
     private fun checkUserPlay(cards: MutableList<Card>, flippedCards: MutableList<Card>) {

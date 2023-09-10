@@ -30,9 +30,13 @@ class CardAnimator : DefaultItemAnimator(){
                 Log.d("CardAnimator", "FLAG_CHANGED")
                 payloads.forEach {
                     when (it) {
-                        MemoryGameActionType.FLIP_CARD -> {
+                        MemoryGameActionType.FLIP_CARD_UP -> {
                             Log.d("CardAnimator", "CardItemHolderPreviousInfo(false)")
                             return CardItemHolderPreviousInfo(false)
+                        }
+                        MemoryGameActionType.FLIP_CARD_DOWN -> {
+                            Log.d("CardAnimator", "FLIP_CARD_DOWN CardItemHolderPreviousInfo(true)")
+                            return CardItemHolderPreviousInfo(true)
                         }
                         MemoryGameActionType.UNFLIP_CARDS -> {
                             Log.d("CardAnimator", "CardItemHolderPreviousInfo(true)")

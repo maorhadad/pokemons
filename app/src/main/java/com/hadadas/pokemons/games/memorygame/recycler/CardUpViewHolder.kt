@@ -32,15 +32,15 @@ class CardUpViewHolder(private val cardUpBinding: CardPokemonUpBinding,
     private fun flipCardUp() {
         frontAnimation?.setTarget(cardUpBinding.llCardUp)
         animFlipHide?.setTarget(cardUpBinding.llCardBack)
-        animSet.playTogether(frontAnimation, animFlipHide)
-        animSet.start()
+        frontAnimation?.start()
+        animFlipHide?.start()
     }
 
     private fun flipCardDown() {
         frontAnimation?.setTarget(cardUpBinding.llCardBack)
         animFlipHide?.setTarget(cardUpBinding.llCardUp)
-        animSet.playTogether(animFlipHide, frontAnimation)
-        animSet.start()
+        animFlipHide?.start()
+        frontAnimation?.start()
     }
 
     override fun animateFlip(isPreViewFlipped: Boolean, onAnimationStart: () -> Unit, onAnimationDone: () -> Unit) {
@@ -48,11 +48,10 @@ class CardUpViewHolder(private val cardUpBinding: CardPokemonUpBinding,
         animFlipHide = AnimatorInflater.loadAnimator(cardUpBinding.llCardBack.context, R.animator.card_flip_back) as AnimatorSet
         cardUpBinding.llCardUp.visibility = View.VISIBLE
         cardUpBinding.llCardBack.visibility = View.VISIBLE
-        animSet.addListener(object : Animator.AnimatorListener {
+        frontAnimation?.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
                 Log.d("frontAnimation", "onAnimationStart")
                 onAnimationStart()
-
             }
 
             override fun onAnimationEnd(animation: Animator) {
@@ -69,6 +68,28 @@ class CardUpViewHolder(private val cardUpBinding: CardPokemonUpBinding,
 
             override fun onAnimationRepeat(animation: Animator) {
                 Log.d("frontAnimation", "onAnimationRepeat")
+            }
+        })
+        animFlipHide?.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+                Log.d("animFlipHide", "onAnimationStart")
+                onAnimationStart()
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                Log.d("animFlipHide", "onAnimationEnd")
+                animation.removeAllListeners()
+                onAnimationDone()
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                Log.d("animFlipHide", "onAnimationCancel")
+                animation.removeAllListeners()
+                onAnimationDone()
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+                Log.d("animFlipHide", "onAnimationRepeat")
             }
         })
         if (isPreViewFlipped){

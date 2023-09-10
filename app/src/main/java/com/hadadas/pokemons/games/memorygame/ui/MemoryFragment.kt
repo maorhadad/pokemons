@@ -51,7 +51,6 @@ class MemoryFragment : Fragment(), IItemClickListener {
             layoutManager = getGridLayoutManager()
         }
         binding?.btRestartGame?.setOnClickListener {
-            pokemonsAdapter?.submitList(null)
             viewModel.restartGame()
         }
 
@@ -73,8 +72,12 @@ class MemoryFragment : Fragment(), IItemClickListener {
             .getActionResult()
             .observe(viewLifecycleOwner) { actionResult ->
                 when (actionResult.type) {
-                    MemoryGameActionType.FLIP_CARD -> {
+                    MemoryGameActionType.FLIP_CARD_UP -> {
                         Log.w("MemoryFragment", "FLIP_CARD ${actionResult.firstIndex} ")
+                        pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
+                    }
+                    MemoryGameActionType.FLIP_CARD_DOWN -> {
+                        Log.w("MemoryFragment", "FLIP_CARD_DOWN ${actionResult.firstIndex} ")
                         pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
                     }
                     MemoryGameActionType.UNFLIP_CARDS -> {
@@ -95,9 +98,7 @@ class MemoryFragment : Fragment(), IItemClickListener {
                             .show() //TODO show animation
                     }
                     MemoryGameActionType.RESTART_GAME -> {
-                        Toast
-                            .makeText(requireContext(), "Restart Game", Toast.LENGTH_SHORT)
-                            .show()
+                        pokemonsAdapter?.notifyDataSetChanged()
                     }
                     MemoryGameActionType.ERROR -> {
                         Toast

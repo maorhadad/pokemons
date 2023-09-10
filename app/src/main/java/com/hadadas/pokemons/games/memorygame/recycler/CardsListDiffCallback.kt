@@ -17,7 +17,7 @@ class CardsListDiffCallback<T : ICard> : DiffUtil.ItemCallback<T>() {
 
     override fun getChangePayload(oldItem: T, newItem: T): Any? {
         return when {
-            !oldItem.isFlipped() && newItem.isFlipped() -> MemoryGameActionType.FLIP_CARD
+            !oldItem.isFlipped() && newItem.isFlipped() -> MemoryGameActionType.FLIP_CARD_UP
             oldItem.isFlipped() && newItem.isFlipped() -> MemoryGameActionType.UNFLIP_CARDS
             else -> null
         }

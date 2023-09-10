@@ -29,7 +29,6 @@ class MemoryGameViewModel(application: Application) : AndroidViewModel(applicati
 
     fun restartGame(){
         viewModelScope.launch {
-            delay(500)
             memoryGameRepository.restartGame()
         }
     }
