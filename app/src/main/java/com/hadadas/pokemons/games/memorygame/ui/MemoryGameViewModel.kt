@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.hadadas.pokemons.abstraction.IRepositoryAccess
 import com.hadadas.pokemons.games.memorygame.Card
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -15,7 +14,7 @@ class MemoryGameViewModel(application: Application) : AndroidViewModel(applicati
 
     val memoryGameRepository = (application as IRepositoryAccess).getRepository().memoryGameRepository
 
-    public fun onGameStart(numberOfPokemons: Int = 9) {
+    public fun onGameStart(numberOfPokemons: Int = 6) {
         viewModelScope.launch {
             try {
                 memoryGameRepository.startGame(numberOfPokemons)
@@ -36,6 +35,12 @@ class MemoryGameViewModel(application: Application) : AndroidViewModel(applicati
     fun onCardClick(card: Card, index: Int) {
         viewModelScope.launch(Dispatchers.Main) {
             memoryGameRepository.flipCardAction(card, index)
+        }
+    }
+
+    fun validateCards() {
+        viewModelScope.launch {
+            memoryGameRepository.validateCards()
         }
     }
 }

@@ -3,7 +3,6 @@ package com.hadadas.pokemons.games.memorygame
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.hadadas.pokemons.BuildConfig
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonRepository
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +20,10 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
     override suspend fun startGame(_numberOfPokemons: Int) {
         try {
             withContext(Dispatchers.IO) {
-                numberOfPokemons = _numberOfPokemons
-                _memoryGame = generateGameBoard(numberOfPokemons)
-                memoryGame.postValue(_memoryGame)
+                if (_memoryGame == null) {
+                    numberOfPokemons = _numberOfPokemons
+                    restartGame()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,9 +49,9 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
             cards2.add(transformToCard(cardId, it.pokemon))
         }
         cards.addAll(cards2)
-        if (!BuildConfig.DEBUG) {
+        //if (!BuildConfig.DEBUG) {
             cards.shuffle()
-        }
+        // }
         val board = Board(cards = cards, flippedCards = mutableListOf(), isBoardFinished = false)
         return MemoryGame(players = players, board = board, isGameFinished = false)
     }
@@ -77,6 +77,20 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
             }
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    override suspend fun validateCards() {
+        withContext(Dispatchers.IO) {
+            delay(200)
+            _memoryGame?.board?.apply {
+                cards.forEachIndexed() { index, it ->
+                    if (it.flipped) {
+                        actionResultLD.postValue((ActionResult(type = MemoryGameActionType.FLIP_CARD_UP, index)))
+                        delay(100)
+                    }
+                }
+            }
         }
     }
 
@@ -150,4 +164,5 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
     private fun transformToCard(id: Int, pokemon: IPokemon): Card {
         return Card(id, pokemon, false, false)
     }
+
 }

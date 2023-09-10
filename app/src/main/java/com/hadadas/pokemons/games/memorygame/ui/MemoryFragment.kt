@@ -65,7 +65,6 @@ class MemoryFragment : Fragment(), IItemClickListener {
             .observe(viewLifecycleOwner) { memoryGame ->
                 memoryGame?.let {
                     pokemonsAdapter?.submitList(it.board.cards.toMutableList())
-
                 }
             }
         viewModel.memoryGameRepository
@@ -98,7 +97,7 @@ class MemoryFragment : Fragment(), IItemClickListener {
                             .show() //TODO show animation
                     }
                     MemoryGameActionType.RESTART_GAME -> {
-                        pokemonsAdapter?.notifyDataSetChanged()
+                        //pokemonsAdapter?.notifyDataSetChanged()
                     }
                     MemoryGameActionType.ERROR -> {
                         Toast
@@ -148,6 +147,14 @@ class MemoryFragment : Fragment(), IItemClickListener {
         viewModel.onGameStart()
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("MemoryFragment", "onResume: Validate cards")
+        viewModel.validateCards()
+    }
+    override fun onStop() {
+        super.onStop()
+    }
     override fun onItemClick(pokemonCard: Any) {
         pokemonsAdapter?.currentList?.let {
             viewModel.onCardClick(pokemonCard as Card, it.indexOf(pokemonCard))

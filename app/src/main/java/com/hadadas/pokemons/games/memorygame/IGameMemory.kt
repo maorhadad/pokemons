@@ -10,4 +10,7 @@ interface IGameMemory {
     fun getMemoryGame(): LiveData<MemoryGame?>
 
     fun getActionResult(): LiveData<ActionResult>
+
+    suspend fun validateCards()
+
 }
