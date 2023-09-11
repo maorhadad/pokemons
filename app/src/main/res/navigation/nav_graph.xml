@@ -24,21 +24,30 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.hadadas.pokemons.ui.main.MainFragment"
-        android:label="fragment_dev_byte"
+        android:label="Pokemons"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_detailPokemonFragment"
             app:destination="@id/detailPokemonFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_mainFragment_to_memoryFragment"
+            app:destination="@id/memoryFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/detailPokemonFragment"
         android:name="com.hadadas.pokemons.ui.main.DetailPokemonFragment"
-        android:label="fragment_detail_pokemon"
+        android:label="Details"
         tools:layout="@layout/fragment_detail_pokemon" >
         <argument
             android:name="pokemonName"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/memoryFragment"
+        android:name="com.hadadas.pokemons.games.memorygame.ui.MemoryFragment"
+        android:label="MemoryFragment" />
 </navigation>

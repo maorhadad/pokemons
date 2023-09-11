@@ -28,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"
+                app:menu="@menu/main_menu"
                 app:title="@string/app_name" />
 
             <TextView

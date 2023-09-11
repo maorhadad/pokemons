@@ -11,4 +11,6 @@
     <string name="pokemon_id_row">ID</string>
     <string name="pokemon_name_row">Name</string>
     <string name="restart">Restart</string>
+    <string name="new_memory_game">New Memory Game</string>
+    <string name="license">license</string>
 </resources>

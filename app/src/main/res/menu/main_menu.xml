@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/new_game"
+        android:icon="@drawable/ic_new_memory_game"
+        android:title="@string/new_memory_game"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/license"
+        android:icon="@drawable/ic_license"
+        android:title="@string/license"
+        app:showAsAction="ifRoom"/>
+</menu>

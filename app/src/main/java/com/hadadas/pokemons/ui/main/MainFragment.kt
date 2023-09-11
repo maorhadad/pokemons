@@ -9,10 +9,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.hadadas.pokemons.abstraction.IPokemon
+import com.hadadas.pokemons.R
 import com.hadadas.pokemons.abstraction.IItemClickListener
+import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.databinding.FragmentMainBinding
 import com.hadadas.pokemons.domain.PokemonShort
 import com.hadadas.pokemons.ui.main.recycler.PokemonsAdapterK
@@ -26,6 +28,7 @@ class MainFragment : Fragment(), IItemClickListener {
     private var pokemonsAdapter: PokemonsAdapterK<PokemonShort>? = null
     private val viewModel: MainViewModel by viewModels()
     private var binding: FragmentMainBinding? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMainBinding.inflate(inflater)
@@ -41,6 +44,7 @@ class MainFragment : Fragment(), IItemClickListener {
             layoutManager = getGridLayoutManager()
             adapter = pokemonsAdapter
         }
+
 
         pokemonsAdapter?.addLoadStateListener { loadState ->
             // show empty list
@@ -69,6 +73,7 @@ class MainFragment : Fragment(), IItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        inflateMenu()
         viewModel.pokemons.observe(viewLifecycleOwner) { pokemons ->
             pokemons?.let {
                 pokemonsAdapter?.submitData(lifecycle, it)
@@ -100,5 +105,24 @@ class MainFragment : Fragment(), IItemClickListener {
             }
         }
         return layoutManager
+    }
+
+    private fun inflateMenu() {
+        val navController = findNavController()
+        binding?.toolbar?.setupWithNavController(navController)
+        binding?.toolbar?.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.new_game -> {
+                    val action = MainFragmentDirections.actionMainFragmentToMemoryFragment()
+                    findNavController().navigate(action)
+                    true
+                }
+                R.id.license -> {
+                    // loadTasks(true)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 }
