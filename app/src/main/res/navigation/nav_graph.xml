@@ -49,5 +49,9 @@
     <fragment
         android:id="@+id/memoryFragment"
         android:name="com.hadadas.pokemons.games.memorygame.ui.MemoryFragment"
-        android:label="MemoryFragment" />
+        android:label="MemoryFragment" >
+        <action
+            android:id="@+id/action_memoryFragment_to_detailPokemonFragment"
+            app:destination="@id/detailPokemonFragment" />
+    </fragment>
 </navigation>

@@ -1,6 +1,7 @@
 package com.hadadas.pokemons.games.memorygame
 
 import androidx.lifecycle.LiveData
+import com.hadadas.pokemons.utils.Event
 
 interface IGameMemory {
     suspend fun startGame(numberOfPokemons: Int)
@@ -9,7 +10,7 @@ interface IGameMemory {
     suspend fun flipCardAction(card: Card, index : Int)
     fun getMemoryGame(): LiveData<MemoryGame?>
 
-    fun getActionResult(): LiveData<ActionResult>
+    fun getActionResult(): LiveData<Event<ActionResult>>
 
     suspend fun validateCards()
 

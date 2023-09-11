@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.hadadas.pokemons.abstraction.IItemClickListener
 import com.hadadas.pokemons.databinding.CardPokemonUpBinding
@@ -23,6 +24,7 @@ import com.hadadas.pokemons.games.memorygame.MemoryGameActionType
 import com.hadadas.pokemons.games.memorygame.recycler.CardBaseViewHolder
 import com.hadadas.pokemons.games.memorygame.recycler.CardUpViewHolder
 import com.hadadas.pokemons.games.memorygame.recycler.PokemonsCardAdapterK
+import com.hadadas.pokemons.ui.main.MainFragmentDirections
 import com.hadadas.pokemons.ui.main.recycler.ViewHolderFactory
 
 
@@ -67,10 +69,12 @@ class MemoryFragment : Fragment(), IItemClickListener {
                     pokemonsAdapter?.submitList(it.board.cards.toMutableList())
                 }
             }
+
         viewModel.memoryGameRepository
             .getActionResult()
-            .observe(viewLifecycleOwner) { actionResult ->
-                when (actionResult.type) {
+            .observe(viewLifecycleOwner) { event ->
+                val actionResult = event.getContentIfNotHandled()
+                when (actionResult?.type) {
                     MemoryGameActionType.FLIP_CARD_UP -> {
                         Log.w("MemoryFragment", "FLIP_CARD ${actionResult.firstIndex} ")
                         pokemonsAdapter?.notifyItemChanged(actionResult.firstIndex, actionResult.type)
@@ -91,6 +95,10 @@ class MemoryFragment : Fragment(), IItemClickListener {
                             .makeText(requireContext(), "Show Pitsotsation animation", Toast.LENGTH_SHORT)
                             .show()
                     }
+                    MemoryGameActionType.SHOW_DETAILS -> {
+                        val action = MemoryFragmentDirections.actionMemoryFragmentToDetailPokemonFragment(actionResult.message)
+                        findNavController().navigate(action)
+                    }
                     MemoryGameActionType.FINISH_GAME -> {
                         Toast
                             .makeText(requireContext(), "Show a bigger Pitsotsation animation", Toast.LENGTH_SHORT)
@@ -103,6 +111,9 @@ class MemoryFragment : Fragment(), IItemClickListener {
                         Toast
                             .makeText(requireContext(), actionResult.message, Toast.LENGTH_SHORT)
                             .show()
+                    }
+                    null ->{
+                        //do nothing
                     }
                     else -> {
                         pokemonsAdapter?.notifyDataSetChanged()
@@ -137,7 +148,7 @@ class MemoryFragment : Fragment(), IItemClickListener {
         var spanCount = screenWidthPixels / viewSizePixels
 
         // Ensure the minimum span count is 1
-        spanCount = Math.max(spanCount, 1)
+        spanCount = spanCount.coerceAtLeast(1)
         Log.d("MemoryFragment", "calculateSpanCount: $spanCount")
         return spanCount
     }

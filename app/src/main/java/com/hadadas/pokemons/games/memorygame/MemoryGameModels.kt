@@ -65,7 +65,7 @@ data class MemoryGameEventData(val players: List<Player>, val board: Board, val 
 data class MemoryGameAction(val type: MemoryGameActionType, val data: MemoryGameActionData)
 
 enum class MemoryGameActionType {
-    START_GAME, RESTART_GAME, END_GAME, FLIP_CARD_UP,FLIP_CARD_DOWN, MATCH_CARDS, UNFLIP_CARDS, FINISH_BOARD, FINISH_GAME, ERROR, ERROR_CARD_FLIP
+    START_GAME, RESTART_GAME, END_GAME, FLIP_CARD_UP,FLIP_CARD_DOWN, MATCH_CARDS, UNFLIP_CARDS, FINISH_BOARD, FINISH_GAME, ERROR, SHOW_DETAILS
 }
 
 data class MemoryGameActionData(val players: List<Player>, val board: Board, val error: MemoryGameError)

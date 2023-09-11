@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.abstraction.IPokemonRepository
+import com.hadadas.pokemons.utils.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -13,7 +14,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
 
     private var memoryGame: MutableLiveData<MemoryGame?> = MutableLiveData()
     private var _memoryGame: MemoryGame? = null
-    private var actionResultLD = MutableLiveData<ActionResult>()
+    private var actionResultLD = MutableLiveData<Event<ActionResult>>()
     private var currentPlayCards = mutableListOf<Card>()
     private var numberOfPokemons = 0
 
@@ -64,7 +65,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
                     cards.forEachIndexed() { index, it ->
                         if(it.flipped) {
                             it.setIsFlipped(false)
-                            actionResultLD.postValue((ActionResult(type = MemoryGameActionType.FLIP_CARD_DOWN, index)))
+                            actionResultLD.postValue(Event(ActionResult(type = MemoryGameActionType.FLIP_CARD_DOWN, index)))
                             delay(100)
                         }
                     }
@@ -73,7 +74,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
                 delay(800)
                 _memoryGame = generateGameBoard(numberOfPokemons)
                 memoryGame.postValue(_memoryGame)
-                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.RESTART_GAME, message = "Restarted"))
+                actionResultLD.postValue(Event(ActionResult(type = MemoryGameActionType.RESTART_GAME, message = "Restarted")))
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -86,7 +87,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
             _memoryGame?.board?.apply {
                 cards.forEachIndexed() { index, it ->
                     if (it.flipped) {
-                        actionResultLD.postValue((ActionResult(type = MemoryGameActionType.FLIP_CARD_UP, index)))
+                        actionResultLD.postValue( Event(ActionResult(type = MemoryGameActionType.FLIP_CARD_UP, index)))
                         delay(100)
                     }
                 }
@@ -102,12 +103,12 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
         _memoryGame?.board?.apply {
             if (currentPlayCards.size >= 2) {
                 Log.d("MemoryGameRepository", "flipCardAction: currentPlayCards.size >= 2. Retruning")
-                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Wait for current play to finish"))
+                actionResultLD.postValue(Event(ActionResult(type = MemoryGameActionType.ERROR, message = "Wait for current play to finish")))
                 return@apply
             }
             if (card.flipped) {
                 Log.d("MemoryGameRepository", "flipCardAction: card.flipped. Retruning")
-                actionResultLD.postValue(ActionResult(type = MemoryGameActionType.ERROR, message = "Card already flipped"))
+                actionResultLD.postValue(Event(ActionResult(type = MemoryGameActionType.SHOW_DETAILS, firstIndex = index, message = card.getPokemonName())))
                 return@apply
             }
             flipCard(cards, card)
@@ -121,7 +122,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
         val index = cards.indexOf(card)
         card.setIsFlipped(true)
         currentPlayCards.add(card)
-        actionResultLD.value = ActionResult(type = MemoryGameActionType.FLIP_CARD_UP, firstIndex = index)
+        actionResultLD.value = Event(ActionResult(type = MemoryGameActionType.FLIP_CARD_UP, firstIndex = index))
     }
 
     private fun checkUserPlay(cards: MutableList<Card>, flippedCards: MutableList<Card>) {
@@ -135,7 +136,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
                 val index2 = cards.indexOf(secondCard)
                 flippedCards.add(firstCard)
                 flippedCards.add(secondCard)
-                actionResultLD.value = ActionResult(type = MemoryGameActionType.MATCH_CARDS, index1, index2)
+                actionResultLD.value = Event(ActionResult(type = MemoryGameActionType.MATCH_CARDS, index1, index2))
 
             } else {
                 firstCard.setIsFlipped(false)
@@ -143,7 +144,7 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
                 val index1 = cards.indexOf(firstCard)
                 val index2 = cards.indexOf(secondCard)
                 Log.d("MemoryGameRepository", "checkUserPlay: ${firstCard.id} ${secondCard.id} " + "un flip cards at index: index1: ${index1} index2: $index2")
-                actionResultLD.value = (ActionResult(type = MemoryGameActionType.UNFLIP_CARDS, index1, index2))
+                actionResultLD.value = Event((ActionResult(type = MemoryGameActionType.UNFLIP_CARDS, index1, index2)))
             }
             Log.w("MemoryGameRepository", "checkUserPlay: currentPlayCards.clear()")
             currentPlayCards.clear()
@@ -154,12 +155,12 @@ class MemoryGameRepository(private val pokemonRepository: IPokemonRepository) : 
     private fun checkForEndGame(cards: MutableList<Card>, flippedCards: MutableList<Card>) {
         if (flippedCards.size == cards.size) {
             _memoryGame?.isGameFinished = true
-            actionResultLD.postValue(ActionResult(type = MemoryGameActionType.FINISH_GAME))
+            actionResultLD.postValue(Event(ActionResult(type = MemoryGameActionType.FINISH_GAME)))
         }
     }
 
     override fun getMemoryGame(): LiveData<MemoryGame?> = memoryGame
-    override fun getActionResult(): LiveData<ActionResult> = actionResultLD
+    override fun getActionResult(): LiveData<Event<ActionResult>> = actionResultLD
 
     private fun transformToCard(id: Int, pokemon: IPokemon): Card {
         return Card(id, pokemon, false, false)

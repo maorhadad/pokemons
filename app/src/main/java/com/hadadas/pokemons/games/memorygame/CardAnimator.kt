@@ -7,12 +7,9 @@ import com.hadadas.pokemons.games.memorygame.recycler.CardBaseViewHolder
 
 class CardAnimator : DefaultItemAnimator(){
 
-    override fun canReuseUpdatedViewHolder(
-        viewHolder: RecyclerView.ViewHolder, payloads: MutableList<Any>
-    ) = true
+    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder, payloads: MutableList<Any>) = true
 
-    override fun canReuseUpdatedViewHolder(
-        viewHolder: RecyclerView.ViewHolder)= true
+    override fun canReuseUpdatedViewHolder(viewHolder: RecyclerView.ViewHolder) = true
 
 
     override fun getSupportsChangeAnimations(): Boolean {
@@ -60,6 +57,7 @@ class CardAnimator : DefaultItemAnimator(){
         }
         return super.recordPreLayoutInformation(state, viewHolder, changeFlags, payloads)
     }
+
 
     override fun recordPostLayoutInformation(state: RecyclerView.State,
                                              viewHolder: RecyclerView.ViewHolder): ItemHolderInfo {
