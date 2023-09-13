@@ -13,4 +13,6 @@
     <string name="restart">Restart</string>
     <string name="new_memory_game">New Memory Game</string>
     <string name="license">license</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

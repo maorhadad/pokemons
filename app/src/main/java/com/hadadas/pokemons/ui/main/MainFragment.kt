@@ -16,6 +16,7 @@ import com.hadadas.pokemons.R
 import com.hadadas.pokemons.abstraction.IItemClickListener
 import com.hadadas.pokemons.abstraction.IPokemon
 import com.hadadas.pokemons.databinding.FragmentMainBinding
+import com.hadadas.pokemons.databinding.FragmentMenuBinding
 import com.hadadas.pokemons.domain.PokemonShort
 import com.hadadas.pokemons.ui.main.recycler.PokemonsAdapterK
 
@@ -28,11 +29,12 @@ class MainFragment : Fragment(), IItemClickListener {
     private var pokemonsAdapter: PokemonsAdapterK<PokemonShort>? = null
     private val viewModel: MainViewModel by viewModels()
     private var binding: FragmentMainBinding? = null
+    private var meneuBinding: FragmentMenuBinding? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMainBinding.inflate(inflater)
-
+        meneuBinding = binding?.menuLayoutInclude
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding?.lifecycleOwner = viewLifecycleOwner
 
@@ -44,7 +46,15 @@ class MainFragment : Fragment(), IItemClickListener {
             layoutManager = getGridLayoutManager()
             adapter = pokemonsAdapter
         }
+        binding?.btnMenu?.setOnClickListener {
+            meneuBinding?.clMenu?.visibility = View.VISIBLE
+            binding?.btnMenu?.visibility = View.GONE
+        }
 
+        meneuBinding?.btnMenuUp?.setOnClickListener {
+            meneuBinding?.clMenu?.visibility = View.GONE
+            binding?.btnMenu?.visibility = View.VISIBLE
+        }
 
         pokemonsAdapter?.addLoadStateListener { loadState ->
             // show empty list

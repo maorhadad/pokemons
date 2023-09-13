@@ -39,11 +39,10 @@
                 android:text="@string/title_pokadex"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 android:background="@color/colorYellow"/>
 
         </com.google.android.material.appbar.AppBarLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/main"
@@ -52,6 +51,7 @@
             android:background="@color/silkWhite"
             tools:context=".ui.main.MainFragment"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
 
             <androidx.recyclerview.widget.RecyclerView
 
@@ -74,6 +74,25 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                android:id="@+id/menuLayoutInclude"
+                layout="@layout/fragment_menu"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorYellow"
+                android:src="@drawable/ic_menu_arrow_down"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="-8dp"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
