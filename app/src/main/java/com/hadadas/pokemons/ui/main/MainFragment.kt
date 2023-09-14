@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,6 +21,7 @@ import com.hadadas.pokemons.databinding.FragmentMainBinding
 import com.hadadas.pokemons.databinding.FragmentMenuBinding
 import com.hadadas.pokemons.domain.PokemonShort
 import com.hadadas.pokemons.ui.main.recycler.PokemonsAdapterK
+
 
 class MainFragment : Fragment(), IItemClickListener {
 
@@ -45,15 +48,6 @@ class MainFragment : Fragment(), IItemClickListener {
         binding?.pokaList?.apply {
             layoutManager = getGridLayoutManager()
             adapter = pokemonsAdapter
-        }
-        binding?.btnMenu?.setOnClickListener {
-            meneuBinding?.clMenu?.visibility = View.VISIBLE
-            binding?.btnMenu?.visibility = View.GONE
-        }
-
-        meneuBinding?.btnMenuUp?.setOnClickListener {
-            meneuBinding?.clMenu?.visibility = View.GONE
-            binding?.btnMenu?.visibility = View.VISIBLE
         }
 
         pokemonsAdapter?.addLoadStateListener { loadState ->
@@ -84,6 +78,54 @@ class MainFragment : Fragment(), IItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         inflateMenu()
+
+        val slideUpAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up_out)
+        val slideDownAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down_in)
+
+        val rotateDownAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_clockwise)
+        val rotateUpAnim: Animation = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_anticlockwise)
+
+        slideUpAnim.fillAfter = true
+        slideDownAnim.fillAfter = true
+        rotateDownAnim.fillAfter = true
+        rotateUpAnim.fillAfter = true
+
+        slideUpAnim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                binding?.btnMenu?.visibility = View.VISIBLE
+                meneuBinding?.clMenu?.visibility = View.GONE
+            }
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+
+        slideDownAnim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {}
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+
+
+        rotateUpAnim.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                meneuBinding?.clMenu?.visibility = View.GONE
+            }
+            override fun onAnimationRepeat(animation: Animation) {}
+        })
+
+        binding?.btnMenu?.setOnClickListener {
+            meneuBinding?.clMenu?.visibility = View.VISIBLE
+            binding?.btnMenu?.visibility = View.GONE
+            meneuBinding?.clMenu?.startAnimation(slideDownAnim)
+            meneuBinding?.btnMenuUp?.startAnimation(rotateDownAnim)
+        }
+
+        meneuBinding?.btnMenuUp?.setOnClickListener {
+            meneuBinding?.clMenu?.startAnimation(slideUpAnim)
+            meneuBinding?.btnMenuUp?.startAnimation(rotateUpAnim)
+        }
+
         viewModel.pokemons.observe(viewLifecycleOwner) { pokemons ->
             pokemons?.let {
                 pokemonsAdapter?.submitData(lifecycle, it)

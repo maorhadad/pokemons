@@ -2,32 +2,32 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <merge  tools:showIn="@layout/fragment_main">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clMenu"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="500dp"
             app:layout_constraintHeight_percent="0.7"
-            android:visibility="gone">
+            android:visibility="invisible">
 
             <LinearLayout
+                android:id="@+id/menuContainer"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:background="@color/colorYellow50"
-                app:layout_constraintBottom_toTopOf="@+id/btnMenuUp"
+                android:background="@color/color_yellow_menu_70"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btnMenuUp"/>
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/btnMenuUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="-8dp"
-                android:backgroundTint="@color/colorYellow"
+                android:background="@color/blue_200"
                 android:src="@drawable/ic_menu_arrow_down"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
