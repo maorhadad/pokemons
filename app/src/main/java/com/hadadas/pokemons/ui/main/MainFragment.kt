@@ -126,6 +126,10 @@ class MainFragment : Fragment(), IItemClickListener {
             meneuBinding?.btnMenuUp?.startAnimation(rotateUpAnim)
         }
 
+        meneuBinding?.miMemoryGame?.itemContainer?.setOnClickListener {
+            val action = MainFragmentDirections.actionMainFragmentToMemoryFragment()
+            findNavController().navigate(action)
+        }
         viewModel.pokemons.observe(viewLifecycleOwner) { pokemons ->
             pokemons?.let {
                 pokemonsAdapter?.submitData(lifecycle, it)
@@ -164,11 +168,6 @@ class MainFragment : Fragment(), IItemClickListener {
         binding?.toolbar?.setupWithNavController(navController)
         binding?.toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.new_game -> {
-                    val action = MainFragmentDirections.actionMainFragmentToMemoryFragment()
-                    findNavController().navigate(action)
-                    true
-                }
                 R.id.license -> {
                     // loadTasks(true)
                     true
