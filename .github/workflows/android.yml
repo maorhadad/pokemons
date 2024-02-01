@@ -8,87 +8,87 @@ env:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
-
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        # Set Current Date As Env Variable
-        - name: Set current date as env variable
-          run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-        
+
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
         # Set Repository Name As Env Variable
-        - name: Set repository name as env variable
-          run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+      - name: Set repository name as env variable
+        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
 
-        - name: set up JDK 11
-          uses: actions/setup-java@v3
-          with:
-            java-version: '11'
-            distribution: 'temurin'
-            cache: gradle
-        - name: Checkout the code
-          uses: actions/checkout@v3
-        - name: Grant execute permission for gradlew
-          run: chmod +x ./gradlew
-        - name: Build with Gradle
-          run: ./gradlew assembleRelease
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Checkout the code
+        uses: actions/checkout@v3
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew assembleRelease
 
-        # Create Bundle AAB Release
-        # Noted for main module build [main_project_module]:bundleRelease
-        - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
-          run: ./gradlew ${{ env.main_project_module }}:bundleRelease
+      # Create Bundle AAB Release
+      # Noted for main module build [main_project_module]:bundleRelease
+      - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
+        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
-        - name: Sign APK
-          uses: kevin-david/zipalign-sign-android-release@v1.1
-          # ID used to access action output
-          id: sign_app
-          with:
-            releaseDirectory: app/build/outputs/apk/release/
-            signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
-            alias: ${{ secrets.KEY_ALIAS }}
-            keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-            keyPassword: ${{ secrets.KEY_PASSWORD }}
-            zipAlign: true
-          env:
-            # override default build-tools version (29.0.3) -- optional
-            BUILD_TOOLS_VERSION: "33.0.0"
+      - name: Sign APK
+        uses: kevin-david/zipalign-sign-android-release@v1.1
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release/
+          signingKeyBase64: ${{ secrets.KEYSTORE_FILE }}
+          alias: ${{ secrets.KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          zipAlign: true
+        env:
+          # override default build-tools version (29.0.3) -- optional
+          BUILD_TOOLS_VERSION: "33.0.0"
 
-        - name: Delete temp keys
-          run: |
-            rm  "app/build/outputs/apk/release/signingKey.jks"
+      - name: Delete temp keys
+        run: |
+          rm  "app/build/outputs/apk/release/signingKey.jks"
 
-        - name: Delete temp idsig
-          run: |
-            find app/build/outputs/apk/release/ -name "PokaDex-*signed.apk.idsig" -delete
-          continue-on-error: true
+      - name: Delete temp idsig
+        run: |
+          find app/build/outputs/apk/release/ -name "PokaDex-*signed.apk.idsig" -delete
+        continue-on-error: true
 
-        - name: Delete temp unaligned
-          run: |
-            find app/build/outputs/apk/release/ -name "PokaDex-*.apk.unaligned" -delete
-          continue-on-error: true
-        - name: Delete temp
-          run: |
-            find app/build/outputs/apk/release/ -name "PokaDex-*.apk" -not -name "PokaDex-*-signed.apk" -delete
-          continue-on-error: true
+      - name: Delete temp unaligned
+        run: |
+          find app/build/outputs/apk/release/ -name "PokaDex-*.apk.unaligned" -delete
+        continue-on-error: true
+      - name: Delete temp
+        run: |
+          find app/build/outputs/apk/release/ -name "PokaDex-*.apk" -not -name "PokaDex-*-signed.apk" -delete
+        continue-on-error: true
 
-        - name: Use the Upload Artifact GitHub Action
-          uses: actions/upload-artifact@v3.1.2
-          with:
-            name: PokaDex-signed-${{ github.run_number }}
-            path: app/build/outputs/apk/release/
+      - name: Use the Upload Artifact GitHub Action
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: PokaDex-signed-${{ github.run_number }}
+          path: app/build/outputs/apk/release/
 
-          # Noted For Output [main_project_module]/build/outputs/bundle/release/
-        - name: Upload AAB (App Bundle) Release - ${{ env.repository_name }}
-          uses: actions/upload-artifact@v3.1.2
-          with:
-            name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - App bundle(s) AAB release generated
-            path: ${{ env.main_project_module }}/build/outputs/bundle/release/
+        # Noted For Output [main_project_module]/build/outputs/bundle/release/
+      - name: Upload AAB (App Bundle) Release - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - App bundle(s) AAB release generated
+          path: ${{ env.main_project_module }}/build/outputs/bundle/release/
 
   release:
     needs: build
