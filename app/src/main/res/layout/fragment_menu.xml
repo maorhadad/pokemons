@@ -30,8 +30,7 @@
                     app:name="@{@string/new_memory_game}"
                     app:resourceId="@{R.drawable.ic_new_memory_game}"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toTopOf="@+id/btnMenuUp"/>
+                    app:layout_constraintStart_toStartOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageButton
