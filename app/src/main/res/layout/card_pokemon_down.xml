@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="com.hadadas.pokemons.abstraction.IItemClickListener" />
+
+        <variable
+            name="card"
+            type="com.hadadas.pokemons.games.memorygame.ICard" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardViewDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:elevation="8dp"
+        card_view:cardBackgroundColor="@color/colorYellowLow"
+        card_view:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:onClick="@{() -> clickListener.onItemClick(card)}"
+            android:outlineProvider="bounds"
+            android:padding="@dimen/small_padding"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/pokaball_small2" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data><import type="com.hadadas.pokemons.R"/></data>
+    <merge  tools:showIn="@layout/fragment_main">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clMenu"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            app:layout_constraintHeight_percent="0.7"
+            android:visibility="invisible">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/menuContainer"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:padding="@dimen/default_padding"
+                android:background="@color/color_yellow_menu_90"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btnMenuUp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <include
+                    android:id="@+id/miMemoryGame"
+                    layout="@layout/custom_menu_item"
+                    app:name="@{@string/new_memory_game}"
+                    app:resourceId="@{R.drawable.ic_new_memory_game}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageButton
+                android:id="@+id/btnMenuUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorYellow"
+                android:src="@drawable/ic_menu_arrow_down"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </merge>
+</layout>
