@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId "com.hadadas.pokemons"
-        minSdk 29
+        minSdk 27
         targetSdk 33
         versionCode = buildNumber
         versionName = generateVersionName()

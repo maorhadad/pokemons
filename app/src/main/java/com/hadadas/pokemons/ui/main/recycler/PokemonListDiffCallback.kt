@@ -12,4 +12,5 @@ class PokemonListDiffCallback<T : IPokemon> : DiffUtil.ItemCallback<T>() {
         return oldItem.getPokemonId() == newItem.getPokemonId() && oldItem.getPokemonName() == newItem.getPokemonName()
     }
 
+
 }
